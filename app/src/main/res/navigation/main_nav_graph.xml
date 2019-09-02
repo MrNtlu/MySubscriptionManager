@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_nav_graph"
+    app:startDestination="@id/subscriptionListFragment">
+
+    <fragment
+        android:id="@+id/subscriptionListFragment"
+        android:name="com.mrntlu.mysubscriptionmanager.ui.fragments.SubscriptionListFragment"
+        android:label="fragment_subscriptions"
+        tools:layout="@layout/fragment_subscription_list" >
+        <action
+            android:id="@+id/action_subsList_to_sub"
+            app:destination="@id/subscriptionFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_subscriptionListFragment_pop"
+            app:popUpTo="@id/subscriptionListFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/subscriptionFragment"
+        android:name="com.mrntlu.mysubscriptionmanager.ui.fragments.SubscriptionFragment"
+        android:label="fragment_subscription"
+        tools:layout="@layout/fragment_subscription" >
+        <action
+            android:id="@+id/action_sub_to_subsList"
+            app:destination="@id/subscriptionListFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_right"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+</navigation>
