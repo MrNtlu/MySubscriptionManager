@@ -9,44 +9,79 @@ import com.mrntlu.mysubscriptionmanager.interfaces.CoroutinesHandler
 import com.mrntlu.mysubscriptionmanager.models.Subscription
 import com.mrntlu.mysubscriptionmanager.models.SubscriptionViewState
 import com.mrntlu.mysubscriptionmanager.repository.SubscriptionRepository
+import com.mrntlu.mysubscriptionmanager.utils.printLog
 import kotlinx.coroutines.*
 
 class SubscriptionViewModel(application: Application):AndroidViewModel(application) {
 
-    private val TIME_OUT=3000L
+    private val TIME_OUT = 3000L
     private var subscriptionRepository: SubscriptionRepository = SubscriptionRepository(application)
-
-    val subscriptionList = MutableLiveData<List<Subscription>>()
-
+    private var mJob: Job? = null
 
     fun getAllSubscriptions(limit: Int): LiveData<List<Subscription>> {
         return subscriptionRepository.getAllSubscriptions(limit)
     }
 
-    fun insertNewSubscription(subscription: Subscription, coroutinesHandler: CoroutinesHandler):Job= viewModelScope.launch(Dispatchers.IO) {
-        val job=withTimeoutOrNull(TIME_OUT) {
-            subscriptionRepository.insertNewSubscription(subscription)
-        }
-        withContext(Dispatchers.Main){
-            if(job==null){
-                coroutinesHandler.onError("Timed out!")
-            }else{
-                coroutinesHandler.onSuccess()
+    fun insertSubscription(subscription: Subscription, coroutinesHandler: CoroutinesHandler) {
+        mJob=Job()
+        mJob=viewModelScope.launch(Dispatchers.IO){
+            val job=withTimeoutOrNull(TIME_OUT) {
+                delay(1000L)
+                subscriptionRepository.insertNewSubscription(subscription)
+            }
+            withContext(Dispatchers.Main){
+                if (job == null) {
+                    coroutinesHandler.onError("Timed out!")
+                } else {
+                    coroutinesHandler.onSuccess("Successfully added.")
+                }
             }
         }
     }
 
-    fun updateSubscription(subscription: Subscription) = viewModelScope.launch(Dispatchers.IO) {
-        subscriptionRepository.updateSubscription(subscription)
+    fun updateSubscription(subscription: Subscription, coroutinesHandler: CoroutinesHandler) {
+        mJob=viewModelScope.launch(Dispatchers.IO){
+            val job=withTimeoutOrNull(TIME_OUT) {
+                delay(500L)
+                subscriptionRepository.updateSubscription(subscription)
+            }
+            withContext(Dispatchers.Main){
+                if (job == null) {
+                    coroutinesHandler.onError("Timed out!")
+                } else {
+                    coroutinesHandler.onSuccess("Successfully updated.")
+                }
+            }
+        }
     }
 
-    fun deleteSubscription(subscription: Subscription) = viewModelScope.launch(Dispatchers.IO) {
-        subscriptionRepository.deleteSubscription(subscription)
+    fun deleteSubscription(subscription: Subscription, coroutinesHandler: CoroutinesHandler) {
+        mJob=viewModelScope.launch(Dispatchers.IO){
+            val job=withTimeoutOrNull(TIME_OUT) {
+                subscriptionRepository.deleteSubscription(subscription)
+            }
+            withContext(Dispatchers.Main){
+                if(job==null){
+                    coroutinesHandler.onError("Timed out!")
+                }else{
+                    coroutinesHandler.onSuccess("Successfully deleted.")
+                }
+            }
+        }
     }
 
     val viewState = MutableLiveData<SubscriptionViewState>()
 
     fun setViewState(viewState: SubscriptionViewState) {
         this.viewState.value = viewState
+    }
+
+    fun cancelJobs(){
+        mJob?.let {
+            if (it.isActive){
+                printLog(message = "Canceled")
+                it.cancel()
+            }
+        }
     }
 }

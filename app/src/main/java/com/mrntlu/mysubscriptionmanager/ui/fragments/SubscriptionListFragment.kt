@@ -12,12 +12,19 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mrntlu.mysubscriptionmanager.R
 import com.mrntlu.mysubscriptionmanager.adapters.SubscriptionListAdapter
+import com.mrntlu.mysubscriptionmanager.interfaces.CoroutinesHandler
 import com.mrntlu.mysubscriptionmanager.interfaces.SubscriptionManager
 import com.mrntlu.mysubscriptionmanager.models.Subscription
 import com.mrntlu.mysubscriptionmanager.models.SubscriptionViewState
+import com.mrntlu.mysubscriptionmanager.utils.dateFormatLong
 import com.mrntlu.mysubscriptionmanager.utils.printLog
+import com.mrntlu.mysubscriptionmanager.utils.setGone
+import com.mrntlu.mysubscriptionmanager.utils.setVisible
 import com.mrntlu.mysubscriptionmanager.viewmodels.SubscriptionViewModel
 import kotlinx.android.synthetic.main.fragment_subscription_list.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class SubscriptionListFragment : Fragment(), SubscriptionManager {
 
@@ -80,14 +87,35 @@ class SubscriptionListFragment : Fragment(), SubscriptionManager {
         return super.onOptionsItemSelected(item)
     }
 
+//Subscription Manager
     override fun onClicked(subscription: Subscription) {
         val bundle= bundleOf("subscription" to subscription)
         viewModel.setViewState(SubscriptionViewState.VIEW)
         navController.navigate(R.id.action_subsList_to_sub,bundle)
     }
 
+    override fun resetPaymentDate(subscription: Subscription) {
+        GlobalScope.launch(Dispatchers.Main){
+            progressbarLayout.setVisible()
+        }
+        viewModel.updateSubscription(subscription,object:CoroutinesHandler{
+            override fun onSuccess(message: String) {
+                progressbarLayout.setGone()
+            }
+
+            override fun onError(exception: String) {
+                progressbarLayout.setGone()
+            }
+        })
+    }
+
+    override fun onStop() {
+        viewModel.cancelJobs()
+        super.onStop()
+    }
+
     override fun onDestroyView() {
-        (activity as AppCompatActivity).setSupportActionBar(null)
+        (activity as AppCompatActivity).setSupportActionBar(null) //To prevent memory leaks
         subscriptionsRV.adapter=null
         super.onDestroyView()
     }

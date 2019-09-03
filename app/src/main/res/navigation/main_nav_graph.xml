@@ -13,14 +13,10 @@
         <action
             android:id="@+id/action_subsList_to_sub"
             app:destination="@id/subscriptionFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right" />
-        <action
-            android:id="@+id/action_subscriptionListFragment_pop"
-            app:popUpTo="@id/subscriptionListFragment"
-            app:popUpToInclusive="true" />
+            app:popExitAnim="@anim/slide_out_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:enterAnim="@anim/slide_in_right" />
     </fragment>
     <fragment
         android:id="@+id/subscriptionFragment"
@@ -30,9 +26,11 @@
         <action
             android:id="@+id/action_sub_to_subsList"
             app:destination="@id/subscriptionListFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right"
             app:popEnterAnim="@anim/slide_in_right"
-            app:popExitAnim="@anim/slide_out_right" />
+            app:popExitAnim="@anim/slide_out_left"
+            app:popUpTo="@+id/subscriptionListFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 </navigation>

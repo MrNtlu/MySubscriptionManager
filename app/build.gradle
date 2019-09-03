@@ -68,6 +68,7 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'com.github.QuadFlask:colorpicker:0.0.13'
+    implementation 'com.github.ybq:Android-SpinKit:1.4.0'
 
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.0-beta-3'
     /*testImplementation 'junit:junit:4.12'

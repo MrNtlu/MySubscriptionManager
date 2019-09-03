@@ -6,10 +6,12 @@ import android.util.Log
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import com.mrntlu.mysubscriptionmanager.R
 import com.mrntlu.mysubscriptionmanager.models.Currency
 import com.mrntlu.mysubscriptionmanager.models.FrequencyType
 import com.mrntlu.mysubscriptionmanager.models.Subscription
+import com.mrntlu.mysubscriptionmanager.models.SubscriptionViewState
 import org.joda.time.DateTime
 import java.text.DateFormat
 import java.util.*
@@ -38,6 +40,21 @@ fun DateTime.dateFormatLong(): String=DateFormat.getDateInstance(DateFormat.LONG
 
 fun TextView.getAsString():String=this.text.toString()
 
-val subscription= Subscription(UUID.randomUUID().toString(),"Test","Desc",Date(),15,FrequencyType.DAY,1.11,
+fun TextView.isEmptyOrBlank():Boolean = this.text.isBlank() || this.text.isEmpty()
+
+val subscriptionTest= Subscription(UUID.randomUUID().toString(),"Test","Desc",Date(),15,FrequencyType.DAY,1.11,
     Currency.DOLLAR,
     R.color.FloralWhite,null)
+
+fun createDialog(context: Context,message: String): AlertDialog.Builder {
+    val dialogBuilder = AlertDialog.Builder(context)
+
+    dialogBuilder.setTitle("Important!")
+    dialogBuilder.setMessage(message).setCancelable(true)
+
+    dialogBuilder.setNegativeButton("No"){dialog, _ ->
+        dialog.dismiss()
+    }
+
+    return dialogBuilder
+}

@@ -3,19 +3,24 @@ package com.mrntlu.mysubscriptionmanager.adapters
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.github.debop.kodatimes.days
 import com.github.debop.kodatimes.months
+import com.github.debop.kodatimes.years
 import com.mrntlu.mysubscriptionmanager.R
 import com.mrntlu.mysubscriptionmanager.adapters.viewholders.LoadingItemViewHolder
 import com.mrntlu.mysubscriptionmanager.adapters.viewholders.NoItemViewHolder
 import com.mrntlu.mysubscriptionmanager.adapters.viewholders.SubscriptionViewHolder
 import com.mrntlu.mysubscriptionmanager.interfaces.SubscriptionManager
 import com.mrntlu.mysubscriptionmanager.models.Currency
+import com.mrntlu.mysubscriptionmanager.models.FrequencyType
 import com.mrntlu.mysubscriptionmanager.models.Subscription
 import com.mrntlu.mysubscriptionmanager.utils.dateFormatLong
 import com.mrntlu.mysubscriptionmanager.utils.printLog
 import kotlinx.android.synthetic.main.cell_subscriptions.view.*
 import org.joda.time.DateTime
 import org.joda.time.Days
+import java.util.*
+import kotlin.collections.ArrayList
 
 class SubscriptionListAdapter:RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -74,22 +79,22 @@ class SubscriptionListAdapter:RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 Currency.LIRA->"${subscription.price} ₺"
             }
 
-            val paymentDate=DateTime(subscription.paymentDate)
-            val upcomingPayment=DateTime(subscription.paymentDate) + subscription.frequency.months()
-            printLog(message = "${paymentDate.dateFormatLong()} ${upcomingPayment.dateFormatLong()}}")
-
-            val daysLeft= Days.daysBetween(paymentDate,upcomingPayment).days
+            var paymentDate=DateTime(subscription.paymentDate)
+            var daysLeft= Days.daysBetween(DateTime(Date()),paymentDate).days
 
             val countDown:String
             if (daysLeft<0){
-                //TODO update the
-                countDown="Error"
-            }else if (daysLeft==0){
-                countDown="Today"
-            }else if (daysLeft==1){
-                countDown="Tomorrow"
+                paymentDate=when(subscription.frequencyType){
+                    FrequencyType.DAY -> paymentDate + subscription.frequency.days()
+                    FrequencyType.MONTH -> paymentDate + subscription.frequency.months()
+                    FrequencyType.YEAR -> paymentDate + subscription.frequency.years()
+                }
+
+                subscriptionManager.resetPaymentDate(subscription.copy(paymentDate = paymentDate.toDate()))
+                daysLeft= Days.daysBetween(DateTime(Date()),paymentDate).days
+                countDown=countDownController(daysLeft)
             }else{
-                countDown="$daysLeft days"
+                countDown=countDownController(daysLeft)
             }
 
             holder.itemView.nameText.text=subscription.name
@@ -103,4 +108,11 @@ class SubscriptionListAdapter:RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         }
     }
+
+    private fun countDownController(daysLeft:Int): String=
+        when (daysLeft) {
+            0 -> "Today"
+            1 -> "Tomorrow"
+            else -> "$daysLeft days"
+        }
 }

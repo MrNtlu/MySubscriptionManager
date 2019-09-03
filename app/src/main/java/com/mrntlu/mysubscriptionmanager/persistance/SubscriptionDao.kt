@@ -13,7 +13,7 @@ interface SubscriptionDao {
     @Insert
     suspend fun insertNewSubscription(subscription: Subscription)
 
-    @Update
+    @Update(onConflict = OnConflictStrategy.IGNORE)
     suspend fun updateSubscription(subscription: Subscription)
 
     @Delete

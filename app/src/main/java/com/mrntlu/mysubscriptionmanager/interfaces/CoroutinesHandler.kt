@@ -1,6 +1,6 @@
 package com.mrntlu.mysubscriptionmanager.interfaces
 
 interface CoroutinesHandler {
-    fun onSuccess()
+    fun onSuccess(message:String)
     fun onError(exception:String)
 }

@@ -2,16 +2,22 @@ package com.mrntlu.mysubscriptionmanager.ui.fragments
 
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
+import android.content.Context
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.DatePicker
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import com.flask.colorpicker.ColorPickerView
 import com.flask.colorpicker.builder.ColorPickerDialogBuilder
 import com.mrntlu.mysubscriptionmanager.R
@@ -24,7 +30,6 @@ import com.mrntlu.mysubscriptionmanager.models.SubscriptionViewState.*
 import com.mrntlu.mysubscriptionmanager.utils.*
 import com.mrntlu.mysubscriptionmanager.viewmodels.SubscriptionViewModel
 import kotlinx.android.synthetic.main.fragment_subscription.*
-import kotlinx.coroutines.Job
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -34,7 +39,7 @@ class SubscriptionFragment : Fragment(), DatePickerDialog.OnDateSetListener, Cor
     private var mSubscription: Subscription? = null
     private lateinit var viewModel: SubscriptionViewModel
     private lateinit var viewState: SubscriptionViewState
-    private lateinit var job: Job
+    private lateinit var navController: NavController
 
     private lateinit var paymentDate:Date
 
@@ -55,8 +60,8 @@ class SubscriptionFragment : Fragment(), DatePickerDialog.OnDateSetListener, Cor
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProviders.of(context as AppCompatActivity)
-            .get(SubscriptionViewModel::class.java)
+        viewModel = ViewModelProviders.of(context as AppCompatActivity).get(SubscriptionViewModel::class.java)
+        navController= Navigation.findNavController(view)
 
         setupObservers()
         setClickListeners()
@@ -91,22 +96,34 @@ class SubscriptionFragment : Fragment(), DatePickerDialog.OnDateSetListener, Cor
     }
 
     private fun setClickListeners() {
-        //Todo null check
         saveFab.setOnClickListener {
             if (viewState == INSERT || viewState == UPDATE) {
-                val subscription = Subscription(
-                    mSubscription?.id ?: UUID.randomUUID().toString(),
-                    nameText.getAsString(),
-                    descriptionText.getAsString(),
-                    mSubscription?.paymentDate ?: paymentDate,
-                    frequencyText.getAsString().toInt(),
-                    FrequencyType.valueOf(frequencyTypeSpinner.selectedItem.toString().toUpperCase(Locale.getDefault())),
-                    priceText.getAsString().toDouble(),
-                    Currency.valueOf(currencySpinner.selectedItem.toString()),
-                    colorPicker.cardBackgroundColor.defaultColor,
-                    paymentMethodText.getAsString())
+                if (checkRules().keys.toBooleanArray()[0]) {
+                    val subscription = Subscription(
+                        mSubscription?.id ?: UUID.randomUUID().toString(),
+                        nameText.getAsString(),
+                        descriptionText.getAsString(),
+                        paymentDate,
+                        frequencyText.getAsString().toInt(),
+                        FrequencyType.valueOf(
+                            frequencyTypeSpinner.selectedItem.toString().toUpperCase(
+                                Locale.getDefault()
+                            )
+                        ),
+                        priceText.getAsString().toDouble(),
+                        Currency.valueOf(currencySpinner.selectedItem.toString()),
+                        colorPicker.cardBackgroundColor.defaultColor,
+                        paymentMethodText.getAsString()
+                    )
 
-                job = if (viewState==UPDATE) viewModel.updateSubscription(subscription) else viewModel.insertNewSubscription(subscription, this)
+                    progressbarLayout.setVisible()
+                    if (viewState == UPDATE) {
+                        viewModel.updateSubscription(subscription, this)
+                        mSubscription = subscription
+                    } else viewModel.insertSubscription(subscription, this)
+                }else{
+                    showToast(it.context,checkRules().values.toTypedArray()[0])
+                }
             } else {
                 viewModel.setViewState(UPDATE)
             }
@@ -130,13 +147,39 @@ class SubscriptionFragment : Fragment(), DatePickerDialog.OnDateSetListener, Cor
         }
 
         deleteFab.setOnClickListener {
-            showToast(it.context, "Delete Fab clicked")
+            viewModel.deleteSubscription(mSubscription!!,this)
         }
 
         cancelFab.setOnClickListener {
             //TODO Show dialog are you sure
-            (it.context as AppCompatActivity).onBackPressed()
+            when(viewState){
+                UPDATE,INSERT->{
+                    val dialogBuilder = createDialog(it.context,"Do you want to discard changes?")
+
+                    dialogBuilder.setPositiveButton("Yes") { _, _ ->
+                        if (viewState==UPDATE) viewModel.setViewState(VIEW) else navController.navigate(R.id.action_sub_to_subsList)
+                    }
+
+                    val alert = dialogBuilder.create()
+                    alert.show()
+                }
+                VIEW -> {
+                    navController.navigate(R.id.action_sub_to_subsList)
+                }
+            }
         }
+    }
+
+    private fun checkRules(): Map<Boolean,String> {
+        return if (priceText.isEmptyOrBlank()){
+            mapOf(false to "Price should't be empty.")
+        }else if (nameText.isEmptyOrBlank()){
+            mapOf(false to "Name should't be empty.")
+        }else if(!::paymentDate.isInitialized){
+            mapOf(false to "Payment Date should't be empty.")
+        }else if (frequencyText.isEmptyOrBlank()){
+            mapOf(false to "Payment frequency should't be empty.")
+        }else mapOf(true to "")
     }
 
     private fun viewStateController(viewState: SubscriptionViewState) {
@@ -171,6 +214,7 @@ class SubscriptionFragment : Fragment(), DatePickerDialog.OnDateSetListener, Cor
 
             colorPicker.setCardBackgroundColor(it.color)
             firstPaymentText.text = it.paymentDate.dateFormatLong().toEditable()
+            paymentDate=it.paymentDate
             it.paymentMethod?.let { method -> paymentMethodText.text = method.toEditable() }
 
             when(viewState){
@@ -228,7 +272,7 @@ class SubscriptionFragment : Fragment(), DatePickerDialog.OnDateSetListener, Cor
             Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
         )
 
-        datePickerDialog.datePicker.minDate = System.currentTimeMillis() - 2000
+        //todo datePickerDialog.datePicker.minDate = System.currentTimeMillis() - 2000
 
         datePickerDialog.show()
     }
@@ -242,23 +286,27 @@ class SubscriptionFragment : Fragment(), DatePickerDialog.OnDateSetListener, Cor
         }
     }
 
-    override fun onSuccess() {
-        //Todo Progressbar
+    override fun onSuccess(message:String) {
+        progressbarLayout.setGone()
         context?.let {
-            showToast(it, "Sucessfully added.")
+            showToast(it, message)
+            when(viewState){
+                UPDATE -> viewModel.setViewState(VIEW)
+                else -> navController.navigate(R.id.action_sub_to_subsList)
+            }
         }
     }
 
     override fun onError(exception: String) {
+        progressbarLayout.setGone()
         context?.let {
             showToast(it, exception)
+            (it as AppCompatActivity).onBackPressed()
         }
     }
 
     override fun onStop() {
+        viewModel.cancelJobs()
         super.onStop()
-        if (::job.isInitialized && job.isActive) {
-            job.cancel()
-        }
     }
 }
