@@ -2,19 +2,15 @@ package com.mrntlu.mysubscriptionmanager.ui.fragments
 
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
-import android.content.Context
-import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.DatePicker
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -33,8 +29,12 @@ import kotlinx.android.synthetic.main.fragment_subscription.*
 import java.text.SimpleDateFormat
 import java.util.*
 
+interface BackPressedCallback{
+    fun onBackPressedCallback()
+}
+
 @SuppressLint("DefaultLocale")
-class SubscriptionFragment : Fragment(), DatePickerDialog.OnDateSetListener, CoroutinesHandler {
+class SubscriptionFragment : Fragment(), DatePickerDialog.OnDateSetListener, CoroutinesHandler,BackPressedCallback {
 
     private var mSubscription: Subscription? = null
     private lateinit var viewModel: SubscriptionViewModel
@@ -50,11 +50,7 @@ class SubscriptionFragment : Fragment(), DatePickerDialog.OnDateSetListener, Cor
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_subscription, container, false)
     }
 
@@ -72,7 +68,7 @@ class SubscriptionFragment : Fragment(), DatePickerDialog.OnDateSetListener, Cor
         currencySpinner.let {
             val arrayAdapter = ArrayAdapter<String>(
                 view.context,
-                android.R.layout.simple_spinner_item,
+                R.layout.spinner_item,
                 Currency.values().map { currency -> currency.name })
             it.adapter = arrayAdapter
         }
@@ -147,19 +143,21 @@ class SubscriptionFragment : Fragment(), DatePickerDialog.OnDateSetListener, Cor
         }
 
         deleteFab.setOnClickListener {
-            viewModel.deleteSubscription(mSubscription!!,this)
+            val dialogBuilder = createDialog(it.context,"Do you want to delete this item?")
+            dialogBuilder.setPositiveButton("Yes") { _, _ ->
+                viewModel.deleteSubscription(mSubscription!!,this)
+            }
+            val alert = dialogBuilder.create()
+            alert.show()
         }
 
         cancelFab.setOnClickListener {
-            //TODO Show dialog are you sure
             when(viewState){
                 UPDATE,INSERT->{
                     val dialogBuilder = createDialog(it.context,"Do you want to discard changes?")
-
                     dialogBuilder.setPositiveButton("Yes") { _, _ ->
                         if (viewState==UPDATE) viewModel.setViewState(VIEW) else navController.navigate(R.id.action_sub_to_subsList)
                     }
-
                     val alert = dialogBuilder.create()
                     alert.show()
                 }
@@ -271,8 +269,7 @@ class SubscriptionFragment : Fragment(), DatePickerDialog.OnDateSetListener, Cor
             Calendar.getInstance().get(Calendar.MONTH),
             Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
         )
-
-        //todo datePickerDialog.datePicker.minDate = System.currentTimeMillis() - 2000
+        datePickerDialog.datePicker.minDate = System.currentTimeMillis() - 2000
 
         datePickerDialog.show()
     }
@@ -303,6 +300,10 @@ class SubscriptionFragment : Fragment(), DatePickerDialog.OnDateSetListener, Cor
             showToast(it, exception)
             (it as AppCompatActivity).onBackPressed()
         }
+    }
+
+    override fun onBackPressedCallback() {
+        cancelFab.performClick()
     }
 
     override fun onStop() {

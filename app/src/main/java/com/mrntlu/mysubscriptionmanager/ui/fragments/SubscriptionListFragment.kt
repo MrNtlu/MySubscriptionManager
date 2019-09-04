@@ -1,8 +1,11 @@
 package com.mrntlu.mysubscriptionmanager.ui.fragments
 
+import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -16,10 +19,8 @@ import com.mrntlu.mysubscriptionmanager.interfaces.CoroutinesHandler
 import com.mrntlu.mysubscriptionmanager.interfaces.SubscriptionManager
 import com.mrntlu.mysubscriptionmanager.models.Subscription
 import com.mrntlu.mysubscriptionmanager.models.SubscriptionViewState
-import com.mrntlu.mysubscriptionmanager.utils.dateFormatLong
-import com.mrntlu.mysubscriptionmanager.utils.printLog
-import com.mrntlu.mysubscriptionmanager.utils.setGone
-import com.mrntlu.mysubscriptionmanager.utils.setVisible
+import com.mrntlu.mysubscriptionmanager.ui.MainActivity
+import com.mrntlu.mysubscriptionmanager.utils.*
 import com.mrntlu.mysubscriptionmanager.viewmodels.SubscriptionViewModel
 import kotlinx.android.synthetic.main.fragment_subscription_list.*
 import kotlinx.coroutines.Dispatchers
@@ -31,6 +32,7 @@ class SubscriptionListFragment : Fragment(), SubscriptionManager {
     private lateinit var adapter:SubscriptionListAdapter
     private lateinit var navController:NavController
     private lateinit var viewModel:SubscriptionViewModel
+    private lateinit var prefs:SharedPreferences
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_subscription_list, container, false)
@@ -42,7 +44,7 @@ class SubscriptionListFragment : Fragment(), SubscriptionManager {
         navController=Navigation.findNavController(view)
         viewModel=ViewModelProviders.of(context as AppCompatActivity).get(SubscriptionViewModel::class.java)
         viewModel.getAllSubscriptions(10)
-
+        prefs=view.context.getSharedPreferences(Constants.PREFS_NAME,0)
         //view.context.deleteDatabase(SubscriptionDatabase.DATABASE_NAME)
 
         setupToolbar()
@@ -83,6 +85,15 @@ class SubscriptionListFragment : Fragment(), SubscriptionManager {
         if (item.itemId == R.id.addSubscriptionMenu) {
             viewModel.setViewState(SubscriptionViewState.INSERT)
             navController.navigate(R.id.action_subsList_to_sub)
+        }else if (item.itemId==R.id.themeChangerMenu){
+            if(prefs.getInt(Constants.PREFS_NAME,Constants.LIGHT_THEME)==Constants.LIGHT_THEME){
+                setIntPrefs(prefs,Constants.PREFS_NAME,Constants.DARK_THEME)
+            }else{
+                setIntPrefs(prefs,Constants.PREFS_NAME,Constants.LIGHT_THEME)
+            }
+            val intent= Intent(context,MainActivity::class.java)
+            startActivity(intent)
+            (context as AppCompatActivity).finish()
         }
         return super.onOptionsItemSelected(item)
     }

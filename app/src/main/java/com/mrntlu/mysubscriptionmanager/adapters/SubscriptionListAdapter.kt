@@ -2,6 +2,7 @@ package com.mrntlu.mysubscriptionmanager.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.github.debop.kodatimes.days
 import com.github.debop.kodatimes.months
@@ -15,6 +16,7 @@ import com.mrntlu.mysubscriptionmanager.models.Currency
 import com.mrntlu.mysubscriptionmanager.models.FrequencyType
 import com.mrntlu.mysubscriptionmanager.models.Subscription
 import com.mrntlu.mysubscriptionmanager.utils.dateFormatLong
+import com.mrntlu.mysubscriptionmanager.utils.isDark
 import com.mrntlu.mysubscriptionmanager.utils.printLog
 import kotlinx.android.synthetic.main.cell_subscriptions.view.*
 import org.joda.time.DateTime
@@ -84,19 +86,29 @@ class SubscriptionListAdapter:RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
             val countDown:String
             if (daysLeft<0){
-                paymentDate=when(subscription.frequencyType){
-                    FrequencyType.DAY -> paymentDate + subscription.frequency.days()
-                    FrequencyType.MONTH -> paymentDate + subscription.frequency.months()
-                    FrequencyType.YEAR -> paymentDate + subscription.frequency.years()
+                while (daysLeft<0) {
+                    paymentDate = when (subscription.frequencyType) {
+                        FrequencyType.DAY -> paymentDate + subscription.frequency.days()
+                        FrequencyType.MONTH -> paymentDate + subscription.frequency.months()
+                        FrequencyType.YEAR -> paymentDate + subscription.frequency.years()
+                    }
+                    daysLeft= Days.daysBetween(DateTime(Date()),paymentDate).days
                 }
-
                 subscriptionManager.resetPaymentDate(subscription.copy(paymentDate = paymentDate.toDate()))
-                daysLeft= Days.daysBetween(DateTime(Date()),paymentDate).days
                 countDown=countDownController(daysLeft)
             }else{
                 countDown=countDownController(daysLeft)
             }
 
+            if (isDark(subscription.color)){
+                holder.itemView.nameText.setTextColor(ContextCompat.getColor(holder.itemView.context,R.color.White))
+                holder.itemView.priceText.setTextColor(ContextCompat.getColor(holder.itemView.context,R.color.White))
+            } else{
+                holder.itemView.nameText.setTextColor(ContextCompat.getColor(holder.itemView.context,R.color.Black))
+                holder.itemView.priceText.setTextColor(ContextCompat.getColor(holder.itemView.context,R.color.Black))
+            }
+
+            holder.itemView.subscriptionCard.setCardBackgroundColor(subscription.color)
             holder.itemView.nameText.text=subscription.name
             holder.itemView.priceText.text=priceTag
             holder.itemView.countdownText.text=countDown

@@ -3,6 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/themeChangerMenu"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_brightness_6_black_24dp"
+        android:title="Change Theme"/>
+
+    <item
         android:id="@+id/addSubscriptionMenu"
         app:showAsAction="ifRoom"
         android:icon="@drawable/ic_add_black_24dp"
