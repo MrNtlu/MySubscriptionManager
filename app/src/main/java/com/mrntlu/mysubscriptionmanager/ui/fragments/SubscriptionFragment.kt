@@ -3,9 +3,7 @@ package com.mrntlu.mysubscriptionmanager.ui.fragments
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.ArrayAdapter
 import android.widget.DatePicker
 import androidx.appcompat.app.AppCompatActivity
@@ -23,8 +21,10 @@ import com.mrntlu.mysubscriptionmanager.models.FrequencyType
 import com.mrntlu.mysubscriptionmanager.models.Subscription
 import com.mrntlu.mysubscriptionmanager.models.SubscriptionViewState
 import com.mrntlu.mysubscriptionmanager.models.SubscriptionViewState.*
+import com.mrntlu.mysubscriptionmanager.ui.MainActivity
 import com.mrntlu.mysubscriptionmanager.utils.*
 import com.mrntlu.mysubscriptionmanager.viewmodels.SubscriptionViewModel
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_subscription.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -62,6 +62,28 @@ class SubscriptionFragment : Fragment(), DatePickerDialog.OnDateSetListener, Cor
         setupObservers()
         setClickListeners()
         setSpinners(view)
+
+        initBottomAppBar(view.context as MainActivity)
+    }
+
+    private fun initBottomAppBar(activity: MainActivity) {
+        activity.setBottomAppBar(this)
+        setBottomAppbarMenuListeners(activity)
+        activity.addFab.setOnClickListener {
+            when(viewState){
+                UPDATE,INSERT->{
+                    val dialogBuilder = createDialog(it.context,"Do you want to discard changes?")
+                    dialogBuilder.setPositiveButton("Yes") { _, _ ->
+                        if (viewState==UPDATE) viewModel.setViewState(VIEW) else navController.navigate(R.id.action_sub_to_subsList)
+                    }
+                    val alert = dialogBuilder.create()
+                    alert.show()
+                }
+                VIEW -> {
+                    navController.navigate(R.id.action_sub_to_subsList)
+                }
+            }
+        }
     }
 
     private fun setSpinners(view: View) {
@@ -91,40 +113,54 @@ class SubscriptionFragment : Fragment(), DatePickerDialog.OnDateSetListener, Cor
         })
     }
 
-    private fun setClickListeners() {
-        saveFab.setOnClickListener {
-            if (viewState == INSERT || viewState == UPDATE) {
-                if (checkRules().keys.toBooleanArray()[0]) {
-                    val subscription = Subscription(
-                        mSubscription?.id ?: UUID.randomUUID().toString(),
-                        nameText.getAsString(),
-                        descriptionText.getAsString(),
-                        paymentDate,
-                        frequencyText.getAsString().toInt(),
-                        FrequencyType.valueOf(
-                            frequencyTypeSpinner.selectedItem.toString().toUpperCase(
-                                Locale.getDefault()
-                            )
-                        ),
-                        priceText.getAsString().toDouble(),
-                        Currency.valueOf(currencySpinner.selectedItem.toString()),
-                        colorPicker.cardBackgroundColor.defaultColor,
-                        paymentMethodText.getAsString()
-                    )
+    private fun setBottomAppbarMenuListeners(activity: MainActivity){
+        activity.bottomAppBar.setOnMenuItemClickListener {
+            when(it.itemId){
+                R.id.appbarSave -> {
+                    if (checkRules().keys.toBooleanArray()[0]) {
+                        val subscription = Subscription(
+                            mSubscription?.id ?: UUID.randomUUID().toString(),
+                            nameText.getAsString(),
+                            descriptionText.getAsString(),
+                            paymentDate,
+                            frequencyText.getAsString().toInt(),
+                            FrequencyType.valueOf(
+                                frequencyTypeSpinner.selectedItem.toString().toUpperCase(
+                                    Locale.getDefault()
+                                )
+                            ),
+                            priceText.getAsString().toDouble(),
+                            Currency.valueOf(currencySpinner.selectedItem.toString()),
+                            colorPicker.cardBackgroundColor.defaultColor,
+                            paymentMethodText.getAsString()
+                        )
 
-                    progressbarLayout.setVisible()
-                    if (viewState == UPDATE) {
-                        viewModel.updateSubscription(subscription, this)
-                        mSubscription = subscription
-                    } else viewModel.insertSubscription(subscription, this)
-                }else{
-                    showToast(it.context,checkRules().values.toTypedArray()[0])
+                        progressbarLayout.setVisible()
+                        if (viewState == UPDATE) {
+                            viewModel.updateSubscription(subscription, this)
+                            mSubscription = subscription
+                        } else viewModel.insertSubscription(subscription, this)
+                    }else{
+                        showToast(activity,checkRules().values.toTypedArray()[0])
+                    }
                 }
-            } else {
-                viewModel.setViewState(UPDATE)
+                R.id.appbarDelete ->{
+                    val dialogBuilder = createDialog(activity,"Do you want to delete this item?")
+                    dialogBuilder.setPositiveButton("Yes") { _, _ ->
+                        viewModel.deleteSubscription(mSubscription!!,this)
+                    }
+                    val alert = dialogBuilder.create()
+                    alert.show()
+                }
+                R.id.appbarEdit -> {
+                    viewModel.setViewState(UPDATE)
+                }
             }
+            true
         }
+    }
 
+    private fun setClickListeners() {
         firstPaymentText.setOnClickListener {
             showDatePickerDialog(it)
         }
@@ -140,31 +176,6 @@ class SubscriptionFragment : Fragment(), DatePickerDialog.OnDateSetListener, Cor
                     colorPicker.setCardBackgroundColor(lastSelectedColor)
                 }
                 .build().show()
-        }
-
-        deleteFab.setOnClickListener {
-            val dialogBuilder = createDialog(it.context,"Do you want to delete this item?")
-            dialogBuilder.setPositiveButton("Yes") { _, _ ->
-                viewModel.deleteSubscription(mSubscription!!,this)
-            }
-            val alert = dialogBuilder.create()
-            alert.show()
-        }
-
-        cancelFab.setOnClickListener {
-            when(viewState){
-                UPDATE,INSERT->{
-                    val dialogBuilder = createDialog(it.context,"Do you want to discard changes?")
-                    dialogBuilder.setPositiveButton("Yes") { _, _ ->
-                        if (viewState==UPDATE) viewModel.setViewState(VIEW) else navController.navigate(R.id.action_sub_to_subsList)
-                    }
-                    val alert = dialogBuilder.create()
-                    alert.show()
-                }
-                VIEW -> {
-                    navController.navigate(R.id.action_sub_to_subsList)
-                }
-            }
         }
     }
 
@@ -185,12 +196,6 @@ class SubscriptionFragment : Fragment(), DatePickerDialog.OnDateSetListener, Cor
             VIEW -> {
                 setViews(false)
                 setData()
-                saveFab.setImageDrawable(
-                    resources.getDrawable(
-                        R.drawable.ic_edit_black_24dp,
-                        context?.theme
-                    )
-                )
             }
             UPDATE -> {
                 setViews(true)
@@ -241,24 +246,17 @@ class SubscriptionFragment : Fragment(), DatePickerDialog.OnDateSetListener, Cor
         firstPaymentText.isClickable = isEditing
         colorPicker.isClickable = isEditing
 
-        if (isEditing) saveFab.setImageDrawable(
-            resources.getDrawable(
-                R.drawable.ic_save_black_24dp,
-                context?.theme
-            )
-        )
-        else saveFab.setImageDrawable(
-            resources.getDrawable(
-                R.drawable.ic_edit_black_24dp,
-                context?.theme
-            )
-        )
+        if (isEditing) context?.let {
+            (it as MainActivity).bottomAppBar.replaceMenu(R.menu.subs_appbar_edit_menu)
+        }
+        else context?.let {
+            (it as MainActivity).bottomAppBar.replaceMenu(R.menu.subs_appbar_insert_menu)
+        }
 
         if (isEditing) currencyText.setGone() else currencyText.setVisible()
         if (isEditing) currencySpinner.setVisible() else currencySpinner.setGone()
         if (isEditing) frequencyTypeText.setGone() else frequencyTypeText.setVisible()
         if (isEditing) frequencyTypeSpinner.setVisible() else frequencyTypeSpinner.setGone()
-        if (isEditing) deleteFab.setGone() else deleteFab.setVisible()
 
     }
 
@@ -303,7 +301,9 @@ class SubscriptionFragment : Fragment(), DatePickerDialog.OnDateSetListener, Cor
     }
 
     override fun onBackPressedCallback() {
-        cancelFab.performClick()
+        context?.let {
+            (it as MainActivity).addFab.performClick()
+        }
     }
 
     override fun onStop() {

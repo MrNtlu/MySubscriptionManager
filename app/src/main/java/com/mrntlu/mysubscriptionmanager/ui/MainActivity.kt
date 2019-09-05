@@ -4,12 +4,13 @@ import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import com.google.android.material.bottomappbar.BottomAppBar
 import com.mrntlu.mysubscriptionmanager.R
 import com.mrntlu.mysubscriptionmanager.ui.fragments.SubscriptionFragment
 import com.mrntlu.mysubscriptionmanager.ui.fragments.SubscriptionListFragment
 import com.mrntlu.mysubscriptionmanager.utils.Constants
 import com.mrntlu.mysubscriptionmanager.utils.createDialog
-import com.mrntlu.mysubscriptionmanager.utils.printLog
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -49,5 +50,25 @@ class MainActivity : AppCompatActivity() {
     private fun setStatusBarColor(color:Int){
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
         window.statusBarColor=resources.getColor(color,theme)
+    }
+
+    fun setBottomAppBar(fragment: Fragment) {
+        when(fragment){
+            is SubscriptionFragment->{
+                bottomAppBar.fabAlignmentMode= BottomAppBar.FAB_ALIGNMENT_MODE_END
+                setBottomAppBarItems(null,R.menu.subs_appbar_edit_menu,R.drawable.ic_clear_black_24dp)
+            }
+            is SubscriptionListFragment->{
+                bottomAppBar.fabAlignmentMode= BottomAppBar.FAB_ALIGNMENT_MODE_CENTER
+                setBottomAppBarItems(R.drawable.ic_dehaze_black_24dp,R.menu.bottom_appbar_menu,R.drawable.ic_add_black_24dp)
+            }
+        }
+    }
+
+    fun setBottomAppBarItems(drawable:Int?,menu:Int,fabDrawable:Int){
+        invalidateOptionsMenu()
+        bottomAppBar.navigationIcon=if (drawable!=null) resources.getDrawable(drawable,theme) else null
+        bottomAppBar.replaceMenu(menu)
+        addFab.setImageDrawable(resources.getDrawable(fabDrawable,theme))
     }
 }

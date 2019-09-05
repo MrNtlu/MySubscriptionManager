@@ -13,6 +13,8 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.bottomappbar.BottomAppBar
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.mrntlu.mysubscriptionmanager.R
 import com.mrntlu.mysubscriptionmanager.adapters.SubscriptionListAdapter
 import com.mrntlu.mysubscriptionmanager.interfaces.CoroutinesHandler
@@ -22,7 +24,9 @@ import com.mrntlu.mysubscriptionmanager.models.SubscriptionViewState
 import com.mrntlu.mysubscriptionmanager.ui.MainActivity
 import com.mrntlu.mysubscriptionmanager.utils.*
 import com.mrntlu.mysubscriptionmanager.viewmodels.SubscriptionViewModel
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_subscription_list.*
+import kotlinx.android.synthetic.main.navigation_bottom_sheet.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -33,6 +37,7 @@ class SubscriptionListFragment : Fragment(), SubscriptionManager {
     private lateinit var navController:NavController
     private lateinit var viewModel:SubscriptionViewModel
     private lateinit var prefs:SharedPreferences
+    private lateinit var navigationSheetDialog:BottomSheetDialog
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_subscription_list, container, false)
@@ -47,9 +52,49 @@ class SubscriptionListFragment : Fragment(), SubscriptionManager {
         prefs=view.context.getSharedPreferences(Constants.PREFS_NAME,0)
         //view.context.deleteDatabase(SubscriptionDatabase.DATABASE_NAME)
 
-        setupToolbar()
         setupRecyclerView()
         setupObservers(10)
+        setBottomSheetDialog(view)
+        initBottomAppBar(context as MainActivity)
+    }
+
+    private fun initBottomAppBar(activity: MainActivity) {
+        activity.setBottomAppBar(this)
+        activity.addFab.setOnClickListener {
+            viewModel.setViewState(SubscriptionViewState.INSERT)
+            navController.navigate(R.id.action_subsList_to_sub)
+        }
+        activity.bottomAppBar.setOnMenuItemClickListener {
+            when(it.itemId){
+                R.id.appbarSort -> showToast(context!!,"Sort clicked")
+            }
+            true
+        }
+        activity.bottomAppBar.setNavigationOnClickListener { navigationSheetDialog.show() }
+    }
+
+    private fun setBottomSheetDialog(view: View) {
+        navigationSheetDialog= BottomSheetDialog(view.context)
+        navigationSheetDialog.setContentView(R.layout.navigation_bottom_sheet)
+
+        navigationSheetDialog.themeChangerText.text=if (prefs.getInt(Constants.PREFS_NAME,Constants.LIGHT_THEME)==Constants.LIGHT_THEME) "Enable Dark Theme" else "Disable Dark Theme"
+
+        navigationSheetDialog.themeChangeSheet.setOnClickListener {
+            if(prefs.getInt(Constants.PREFS_NAME,Constants.LIGHT_THEME)==Constants.LIGHT_THEME){
+                setIntPrefs(prefs,Constants.PREFS_NAME,Constants.DARK_THEME)
+            }else{
+                setIntPrefs(prefs,Constants.PREFS_NAME,Constants.LIGHT_THEME)
+            }
+            val intent= Intent(context,MainActivity::class.java)
+            startActivity(intent)
+            (context as AppCompatActivity).finish()
+            navigationSheetDialog.dismiss()
+        }
+
+        navigationSheetDialog.deleteAllSheet.setOnClickListener {
+            showToast(it.context,"Delete all pressed.")
+            navigationSheetDialog.dismiss()
+        }
     }
 
     private fun setupObservers(limit:Int) {
@@ -61,12 +106,6 @@ class SubscriptionListFragment : Fragment(), SubscriptionManager {
         })
     }
 
-    private fun setupToolbar(){
-        toolbarSubList?.title = "Subscriptions"
-        (activity as AppCompatActivity).setSupportActionBar(toolbarSubList)
-
-    }
-
     private fun setupRecyclerView(){
         adapter= SubscriptionListAdapter()
         adapter.setSubscriptionManager(this)
@@ -74,28 +113,6 @@ class SubscriptionListFragment : Fragment(), SubscriptionManager {
             layoutManager=LinearLayoutManager(context)
             adapter=this@SubscriptionListFragment.adapter
         }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.subscription_toolbar_menu,menu)
-        super.onCreateOptionsMenu(menu, inflater)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.addSubscriptionMenu) {
-            viewModel.setViewState(SubscriptionViewState.INSERT)
-            navController.navigate(R.id.action_subsList_to_sub)
-        }else if (item.itemId==R.id.themeChangerMenu){
-            if(prefs.getInt(Constants.PREFS_NAME,Constants.LIGHT_THEME)==Constants.LIGHT_THEME){
-                setIntPrefs(prefs,Constants.PREFS_NAME,Constants.DARK_THEME)
-            }else{
-                setIntPrefs(prefs,Constants.PREFS_NAME,Constants.LIGHT_THEME)
-            }
-            val intent= Intent(context,MainActivity::class.java)
-            startActivity(intent)
-            (context as AppCompatActivity).finish()
-        }
-        return super.onOptionsItemSelected(item)
     }
 
 //Subscription Manager
@@ -126,7 +143,6 @@ class SubscriptionListFragment : Fragment(), SubscriptionManager {
     }
 
     override fun onDestroyView() {
-        (activity as AppCompatActivity).setSupportActionBar(null) //To prevent memory leaks
         subscriptionsRV.adapter=null
         super.onDestroyView()
     }
