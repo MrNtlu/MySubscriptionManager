@@ -34,8 +34,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val prefs=getSharedPreferences(Constants.PREFS_NAME,0)
-        val themeCode=prefs.getInt(Constants.PREFS_NAME,Constants.LIGHT_THEME)
+        val prefs=getSharedPreferences(Constants.THEME_PREF_NAME,0)
+        val themeCode=prefs.getInt(Constants.THEME_PREF_NAME,Constants.LIGHT_THEME)
 
         if(themeCode==Constants.DARK_THEME){
             setTheme(R.style.DarkTheme)

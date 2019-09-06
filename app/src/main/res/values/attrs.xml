@@ -11,5 +11,6 @@
         <attr name="toolbartextcolor" format="color"/>
         <attr name="spinnertint" format="color"/>
         <attr name="edittextcolor" format="color"/>
+        <attr name="sheetbackgroundcolor" format="color"/>
     </declare-styleable>
 </resources>

@@ -9,6 +9,8 @@ import com.mrntlu.mysubscriptionmanager.interfaces.CoroutinesHandler
 import com.mrntlu.mysubscriptionmanager.models.Subscription
 import com.mrntlu.mysubscriptionmanager.models.SubscriptionViewState
 import com.mrntlu.mysubscriptionmanager.repository.SubscriptionRepository
+import com.mrntlu.mysubscriptionmanager.ui.fragments.OrderType
+import com.mrntlu.mysubscriptionmanager.ui.fragments.SortingType
 import com.mrntlu.mysubscriptionmanager.utils.printLog
 import kotlinx.coroutines.*
 
@@ -18,8 +20,8 @@ class SubscriptionViewModel(application: Application):AndroidViewModel(applicati
     private var subscriptionRepository: SubscriptionRepository = SubscriptionRepository(application)
     private var mJob: Job? = null
 
-    fun getAllSubscriptions(limit: Int): LiveData<List<Subscription>> {
-        return subscriptionRepository.getAllSubscriptions(limit)
+    fun getAllSubscriptions(sortingType: SortingType,orderType: OrderType,limit: Int): LiveData<List<Subscription>> {
+        return subscriptionRepository.getAllSubscriptions(sortingType,orderType,limit)
     }
 
     fun insertSubscription(subscription: Subscription, coroutinesHandler: CoroutinesHandler) {

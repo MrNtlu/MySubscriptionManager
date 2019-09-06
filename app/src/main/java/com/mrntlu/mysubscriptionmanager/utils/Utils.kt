@@ -5,17 +5,20 @@ import android.content.SharedPreferences
 import android.text.Editable
 import android.util.Log
 import android.view.View
+import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import org.joda.time.DateTime
 import java.text.DateFormat
 import java.util.*
 import androidx.core.graphics.ColorUtils
 
 object Constants{
-
-    val PREFS_NAME="theme_code"
+    val THEME_PREF_NAME="theme_code"
+    val ORDER_PREF_NAME="order_type"
+    val SORT_PREF_NAME="sort_type"
     val DARK_THEME=0
     val LIGHT_THEME=1
 }
@@ -41,6 +44,8 @@ fun DateTime.dateFormatLong(): String=DateFormat.getDateInstance(DateFormat.LONG
 fun TextView.getAsString():String=this.text.toString()
 
 fun TextView.isEmptyOrBlank():Boolean = this.text.isBlank() || this.text.isEmpty()
+
+fun ImageButton.setTintColor(color: Int)=this.setColorFilter(ContextCompat.getColor(this.context,color))
 
 fun showToast(context:Context?,message: String) = Toast.makeText(context,message,Toast.LENGTH_SHORT).show()
 

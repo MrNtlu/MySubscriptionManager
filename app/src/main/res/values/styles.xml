@@ -15,6 +15,7 @@
         <item name="toolbartextcolor">@color/Black</item>
         <item name="spinnertint">@color/Black</item>
         <item name="edittextcolor">@color/Black</item>
+        <item name="sheetbackgroundcolor">@color/White</item>
         <item name="android:windowAnimationStyle">@style/WindowsAnimationTransition</item>
     </style>
 
@@ -33,6 +34,7 @@
         <item name="toolbartextcolor">@color/White</item>
         <item name="spinnertint">@color/White</item>
         <item name="edittextcolor">@color/Black</item>
+        <item name="sheetbackgroundcolor">@color/SoftBlack</item>
         <item name="android:windowAnimationStyle">@style/WindowsAnimationTransition</item>
     </style>
 

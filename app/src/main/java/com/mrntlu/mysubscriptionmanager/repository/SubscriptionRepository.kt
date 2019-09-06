@@ -5,13 +5,17 @@ import androidx.lifecycle.LiveData
 import com.mrntlu.mysubscriptionmanager.models.Subscription
 import com.mrntlu.mysubscriptionmanager.persistance.SubscriptionDao
 import com.mrntlu.mysubscriptionmanager.persistance.SubscriptionDatabase
+import com.mrntlu.mysubscriptionmanager.ui.fragments.OrderType
+import com.mrntlu.mysubscriptionmanager.ui.fragments.SortingType
 
 class SubscriptionRepository(application: Application) {
 
     private val subscriptionDao:SubscriptionDao=SubscriptionDatabase.getInstance(application).subscriptionDao
 
-    fun getAllSubscriptions(limit:Int): LiveData<List<Subscription>>{
-        return subscriptionDao.getAllSubscriptions(limit)
+    fun getAllSubscriptions(sortingType:SortingType,orderType:OrderType,limit:Int): LiveData<List<Subscription>>{
+        return if (orderType==OrderType.ASC){
+            subscriptionDao.getAllSubscriptionsAsc(sortingType.code,limit)
+        }else subscriptionDao.getAllSubscriptionsDesc(sortingType.code,limit)
     }
 
     suspend fun insertNewSubscription(subscription: Subscription){
