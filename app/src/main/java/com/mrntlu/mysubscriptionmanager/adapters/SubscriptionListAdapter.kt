@@ -74,13 +74,7 @@ class SubscriptionListAdapter:RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         if (holder is SubscriptionViewHolder){
             val subscription=subscriptionList.get(position)
 
-            val priceTag:String
-            priceTag = when(subscription.currency){
-                Currency.DOLLAR-> "${subscription.price} $"
-                Currency.EURO->"${subscription.price} €"
-                Currency.LIRA->"${subscription.price} ₺"
-            }
-
+            val priceTag="${subscription.price} ${subscription.currency.symbol}"
             var paymentDate=DateTime(subscription.paymentDate)
             var daysLeft= Days.daysBetween(DateTime(Date()),paymentDate).days
 
@@ -94,7 +88,8 @@ class SubscriptionListAdapter:RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                     }
                     daysLeft= Days.daysBetween(DateTime(Date()),paymentDate).days
                 }
-                subscriptionManager.resetPaymentDate(subscription.copy(paymentDate = paymentDate.toDate()))
+                val totalPaid=subscription.totalPaid+subscription.price
+                subscriptionManager.resetPaymentDate(subscription.copy(totalPaid =totalPaid ,paymentDate = paymentDate.toDate()))
                 countDown=countDownController(daysLeft)
             }else{
                 countDown=countDownController(daysLeft)

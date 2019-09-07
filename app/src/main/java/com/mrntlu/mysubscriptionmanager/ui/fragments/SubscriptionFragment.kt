@@ -7,6 +7,7 @@ import android.view.*
 import android.widget.ArrayAdapter
 import android.widget.DatePicker
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -30,7 +31,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 interface BackPressedCallback{
-    fun onBackPressedCallback()
+    fun onBackPressed()
 }
 
 @SuppressLint("DefaultLocale")
@@ -74,7 +75,11 @@ class SubscriptionFragment : Fragment(), DatePickerDialog.OnDateSetListener, Cor
                 UPDATE,INSERT->{
                     val dialogBuilder = createDialog(it.context,"Do you want to discard changes?")
                     dialogBuilder.setPositiveButton("Yes") { _, _ ->
-                        if (viewState==UPDATE) viewModel.setViewState(VIEW) else navController.navigate(R.id.action_sub_to_subsList)
+                        navController.popBackStack()
+                        /*if (viewState==UPDATE) {
+                            val bundle= bundleOf("subscription" to mSubscription)
+                            navController.navigate(R.id.action_sub_to_subView,bundle)
+                        } else navController.navigate(R.id.action_sub_to_subsList)*/
                     }
                     val alert = dialogBuilder.create()
                     alert.show()
@@ -257,7 +262,6 @@ class SubscriptionFragment : Fragment(), DatePickerDialog.OnDateSetListener, Cor
         if (isEditing) currencySpinner.setVisible() else currencySpinner.setGone()
         if (isEditing) frequencyTypeText.setGone() else frequencyTypeText.setVisible()
         if (isEditing) frequencyTypeSpinner.setVisible() else frequencyTypeSpinner.setGone()
-
     }
 
     private fun showDatePickerDialog(view: View) {
@@ -271,7 +275,7 @@ class SubscriptionFragment : Fragment(), DatePickerDialog.OnDateSetListener, Cor
 
         datePickerDialog.show()
     }
-
+//Date Dialog
     override fun onDateSet(p0: DatePicker?, year: Int, month: Int, day: Int) {
         val dateString = "$day ${month + 1} $year"
         val date = SimpleDateFormat("dd MM yyyy", Locale.ENGLISH).parse(dateString)
@@ -280,7 +284,7 @@ class SubscriptionFragment : Fragment(), DatePickerDialog.OnDateSetListener, Cor
             paymentDate=it
         }
     }
-
+//Coroutines Handler
     override fun onSuccess(message:String) {
         progressbarLayout.setGone()
         context?.let {
@@ -300,7 +304,8 @@ class SubscriptionFragment : Fragment(), DatePickerDialog.OnDateSetListener, Cor
         }
     }
 
-    override fun onBackPressedCallback() {
+//OnBackPressed
+    override fun onBackPressed() {
         context?.let {
             (it as MainActivity).addFab.performClick()
         }

@@ -17,6 +17,20 @@
             app:popExitAnim="@anim/slide_out_right"
             app:exitAnim="@anim/slide_out_left"
             app:enterAnim="@anim/slide_in_right" />
+        <action
+            android:id="@+id/action_subsList_to_subView"
+            app:destination="@id/subscriptionViewFragment"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:enterAnim="@anim/slide_in_right"/>
+        <action
+            android:id="@+id/action_subsList_to_subStats"
+            app:destination="@id/subscriptionStatsFragment"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:enterAnim="@anim/slide_in_right"/>
     </fragment>
     <fragment
         android:id="@+id/subscriptionFragment"
@@ -32,5 +46,30 @@
             app:popExitAnim="@anim/slide_out_left"
             app:popUpTo="@+id/subscriptionListFragment"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_sub_to_subView"
+            app:destination="@id/subscriptionViewFragment"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right"
+            app:popEnterAnim="@anim/slide_in_right"
+            app:popExitAnim="@anim/slide_out_left" />
     </fragment>
+    <fragment
+        android:id="@+id/subscriptionViewFragment"
+        android:name="com.mrntlu.mysubscriptionmanager.ui.fragments.SubscriptionViewFragment"
+        android:label="fragment_subscription_view"
+        tools:layout="@layout/fragment_subscription_view" >
+        <action
+            android:id="@+id/action_subView_to_sub"
+            app:destination="@id/subscriptionFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+    <fragment
+        android:id="@+id/subscriptionStatsFragment"
+        android:name="com.mrntlu.mysubscriptionmanager.ui.fragments.SubscriptionStatsFragment"
+        android:label="fragment_subscription_stats"
+        tools:layout="@layout/fragment_subscription_stats" />
 </navigation>

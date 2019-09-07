@@ -9,6 +9,8 @@ import com.google.android.material.bottomappbar.BottomAppBar
 import com.mrntlu.mysubscriptionmanager.R
 import com.mrntlu.mysubscriptionmanager.ui.fragments.SubscriptionFragment
 import com.mrntlu.mysubscriptionmanager.ui.fragments.SubscriptionListFragment
+import com.mrntlu.mysubscriptionmanager.ui.fragments.SubscriptionStatsFragment
+import com.mrntlu.mysubscriptionmanager.ui.fragments.SubscriptionViewFragment
 import com.mrntlu.mysubscriptionmanager.utils.Constants
 import com.mrntlu.mysubscriptionmanager.utils.createDialog
 import kotlinx.android.synthetic.main.activity_main.*
@@ -24,7 +26,7 @@ class MainActivity : AppCompatActivity() {
                 }.create().show()
             }
             is SubscriptionFragment -> {
-                f.onBackPressedCallback()
+                f.onBackPressed()
             }
             else -> super.onBackPressed()
         }
@@ -61,6 +63,14 @@ class MainActivity : AppCompatActivity() {
             is SubscriptionListFragment->{
                 bottomAppBar.fabAlignmentMode= BottomAppBar.FAB_ALIGNMENT_MODE_CENTER
                 setBottomAppBarItems(R.drawable.ic_dehaze_black_24dp,R.menu.bottom_appbar_menu,R.drawable.ic_add_black_24dp)
+            }
+            is SubscriptionViewFragment->{
+                bottomAppBar.fabAlignmentMode= BottomAppBar.FAB_ALIGNMENT_MODE_END
+                setBottomAppBarItems(null,R.menu.subs_appbar_edit_menu,R.drawable.ic_edit_black_24dp)
+            }
+            is SubscriptionStatsFragment->{
+                bottomAppBar.fabAlignmentMode= BottomAppBar.FAB_ALIGNMENT_MODE_END
+                setBottomAppBarItems(null,R.menu.subs_appbar_edit_menu,R.drawable.ic_clear_black_24dp)
             }
         }
     }

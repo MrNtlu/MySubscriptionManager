@@ -45,6 +45,8 @@ fun TextView.getAsString():String=this.text.toString()
 
 fun TextView.isEmptyOrBlank():Boolean = this.text.isBlank() || this.text.isEmpty()
 
+fun String.isEmptyOrBlank():Boolean=this.isBlank() || this.isEmpty()
+
 fun ImageButton.setTintColor(color: Int)=this.setColorFilter(ContextCompat.getColor(this.context,color))
 
 fun showToast(context:Context?,message: String) = Toast.makeText(context,message,Toast.LENGTH_SHORT).show()

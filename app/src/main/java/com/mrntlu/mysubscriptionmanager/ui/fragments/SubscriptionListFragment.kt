@@ -20,6 +20,7 @@ import com.mrntlu.mysubscriptionmanager.interfaces.CoroutinesHandler
 import com.mrntlu.mysubscriptionmanager.interfaces.SubscriptionManager
 import com.mrntlu.mysubscriptionmanager.models.Subscription
 import com.mrntlu.mysubscriptionmanager.models.SubscriptionViewState
+import com.mrntlu.mysubscriptionmanager.persistance.SubscriptionDatabase
 import com.mrntlu.mysubscriptionmanager.ui.MainActivity
 import com.mrntlu.mysubscriptionmanager.ui.fragments.OrderType.*
 import com.mrntlu.mysubscriptionmanager.ui.fragments.SortingType.*
@@ -89,7 +90,6 @@ class SubscriptionListFragment : Fragment(), SubscriptionManager {
         //view.context.deleteDatabase(SubscriptionDatabase.DATABASE_NAME)
 
         setupRecyclerView()
-        setupObservers(limit)
         setBottomSheetDialog(view)
         setSortSheetDialog(view)
         initBottomAppBar(context as MainActivity)
@@ -143,44 +143,18 @@ class SubscriptionListFragment : Fragment(), SubscriptionManager {
 
         sortAndOrderController()
 
-        sortSheetDialog.nameAscBtn.setOnClickListener {
-            if (!(sortingType== NAME && orderType== ASC)){
-                setOrderSortValues(ASC,NAME)
-                sortAndOrderController()
-            }
-            sortSheetDialog.dismiss()
-        }
-        sortSheetDialog.nameDescBtn.setOnClickListener {
-            if (!(sortingType== NAME && orderType== DESC)){
-                setOrderSortValues(DESC,NAME)
-                sortAndOrderController()
-            }
-            sortSheetDialog.dismiss()
-        }
-        sortSheetDialog.priceAscBtn.setOnClickListener {
-            if (!(sortingType== PRICE && orderType== ASC)){
-                setOrderSortValues(ASC,PRICE)
-                sortAndOrderController()
-            }
-            sortSheetDialog.dismiss()
-        }
-        sortSheetDialog.priceDescBtn.setOnClickListener {
-            if (!(sortingType== PRICE && orderType== DESC)){
-                setOrderSortValues(DESC,PRICE)
-                sortAndOrderController()
-            }
-            sortSheetDialog.dismiss()
-        }
-        sortSheetDialog.paymentDateAscBtn.setOnClickListener {
-            if (!(sortingType== PAYMENT_DATE && orderType== ASC)){
-                setOrderSortValues(ASC,PAYMENT_DATE)
-                sortAndOrderController()
-            }
-            sortSheetDialog.dismiss()
-        }
-        sortSheetDialog.paymentDateDescBtn.setOnClickListener {
-            if (!(sortingType== PAYMENT_DATE && orderType== DESC)){
-                setOrderSortValues(DESC,PAYMENT_DATE)
+        setSheetDialogClickListener(sortSheetDialog.nameAscBtn,NAME,ASC)
+        setSheetDialogClickListener(sortSheetDialog.nameDescBtn,NAME,DESC)
+        setSheetDialogClickListener(sortSheetDialog.priceAscBtn,PRICE,ASC)
+        setSheetDialogClickListener(sortSheetDialog.priceDescBtn,PRICE,DESC)
+        setSheetDialogClickListener(sortSheetDialog.paymentDateAscBtn,PAYMENT_DATE,ASC)
+        setSheetDialogClickListener(sortSheetDialog.paymentDateDescBtn,PAYMENT_DATE,DESC)
+    }
+
+    private fun setSheetDialogClickListener(imageButton: ImageButton,sortingType: SortingType,orderType: OrderType){
+        imageButton.setOnClickListener {
+            if (!(this.sortingType==sortingType && this.orderType==orderType)){
+                setOrderSortValues(orderType,sortingType)
                 sortAndOrderController()
             }
             sortSheetDialog.dismiss()
@@ -230,8 +204,7 @@ class SubscriptionListFragment : Fragment(), SubscriptionManager {
 //Subscription Manager
     override fun onClicked(subscription: Subscription) {
         val bundle= bundleOf("subscription" to subscription)
-        viewModel.setViewState(SubscriptionViewState.VIEW)
-        navController.navigate(R.id.action_subsList_to_sub,bundle)
+        navController.navigate(R.id.action_subsList_to_subView,bundle)
     }
 
     override fun resetPaymentDate(subscription: Subscription) {

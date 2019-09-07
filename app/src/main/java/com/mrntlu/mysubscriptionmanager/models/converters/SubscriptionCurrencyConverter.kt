@@ -9,10 +9,18 @@ class SubscriptionCurrencyConverter {
     fun toCurrency(code: Int): Currency {
         return if (code == EURO.code) {
             EURO
-        } else if (code == DOLLAR.code) {
-            DOLLAR
-        } else if (code == LIRA.code) {
-            LIRA
+        } else if (code == USD.code) {
+            USD
+        } else if (code == TRY.code) {
+            TRY
+        }else if (code == WON.code) {
+            WON
+        }else if (code == YEN.code) {
+            YEN
+        }else if (code == RUBLE.code) {
+            RUBLE
+        }else if (code == POUND.code) {
+            POUND
         }else {
             throw IllegalArgumentException("Couldn't recognize status")
         }
