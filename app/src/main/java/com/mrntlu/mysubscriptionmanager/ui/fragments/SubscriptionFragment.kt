@@ -16,6 +16,7 @@ import androidx.navigation.Navigation
 import com.flask.colorpicker.ColorPickerView
 import com.flask.colorpicker.builder.ColorPickerDialogBuilder
 import com.mrntlu.mysubscriptionmanager.R
+import com.mrntlu.mysubscriptionmanager.adapters.CurrencySpinnerAdapter
 import com.mrntlu.mysubscriptionmanager.interfaces.CoroutinesHandler
 import com.mrntlu.mysubscriptionmanager.models.Currency
 import com.mrntlu.mysubscriptionmanager.models.FrequencyType
@@ -29,6 +30,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_subscription.*
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 interface BackPressedCallback{
     fun onBackPressed()
@@ -93,10 +95,9 @@ class SubscriptionFragment : Fragment(), DatePickerDialog.OnDateSetListener, Cor
 
     private fun setSpinners(view: View) {
         currencySpinner.let {
-            val arrayAdapter = ArrayAdapter<String>(
+            val arrayAdapter = CurrencySpinnerAdapter(
                 view.context,
-                R.layout.spinner_item,
-                Currency.values().map { currency -> currency.name })
+                Currency.values().toList())
             it.adapter = arrayAdapter
         }
 

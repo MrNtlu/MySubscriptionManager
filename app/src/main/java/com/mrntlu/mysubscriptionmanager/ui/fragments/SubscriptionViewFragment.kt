@@ -60,16 +60,19 @@ class SubscriptionViewFragment : Fragment() {
     }
 
     private fun setData() {
-        nameViewText.text = mSubscription.name
         if (!mSubscription.description.isEmptyOrBlank()) descriptionViewText.text=mSubscription.description else descriptionViewText.setGone()
+
+        nameViewText.text = mSubscription.name
         priceViewText.text = mSubscription.price.toString()
         currencyViewText.text = mSubscription.currency.name
         frequencyViewText.text=mSubscription.frequency.toString()
+        firstPaymentViewText.text=mSubscription.paymentDate.dateFormatLong()
 
         val frequencyText=mSubscription.frequencyType.toString().toLowerCase(Locale.getDefault()).plus(if (mSubscription.frequency>1)"s" else "")
         frequencyTypeViewText.text=frequencyText
-        firstPaymentViewText.text=mSubscription.paymentDate.dateFormatLong()
-        paidInTotalViewText.text=mSubscription.totalPaid.toString()
+        val paidInTotal="${mSubscription.totalPaid} ${mSubscription.currency.symbol}"
+        paidInTotalViewText.text=paidInTotal
+
         if (!mSubscription.description.isEmptyOrBlank()) paymentMethodViewText.text=mSubscription.paymentMethod
         else{
             paymentMethodTextView.setGone()

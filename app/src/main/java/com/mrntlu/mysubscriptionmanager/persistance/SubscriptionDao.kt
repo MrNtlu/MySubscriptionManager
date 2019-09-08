@@ -8,7 +8,7 @@ import com.mrntlu.mysubscriptionmanager.ui.fragments.SortingType
 @Dao
 interface SubscriptionDao {
 
-    @Query("SELECT * FROM subscriptions ORDER BY CASE :sortingType WHEN 0 THEN name WHEN 1 THEN price WHEN 2 THEN payment_date END ASC LIMIT :limit")
+    @Query("SELECT * FROM subscriptions ORDER BY CASE :sortingType WHEN 0 THEN name WHEN 1 THEN currency AND price WHEN 2 THEN payment_date END ASC LIMIT :limit")
     fun getAllSubscriptionsAsc(sortingType:Int,limit:Int): LiveData<List<Subscription>>
 
     @Query("SELECT * FROM subscriptions ORDER BY CASE :sortingType WHEN 0 THEN name WHEN 1 THEN price WHEN 2 THEN payment_date END DESC LIMIT :limit")

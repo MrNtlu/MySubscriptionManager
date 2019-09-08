@@ -59,6 +59,14 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0-alpha03"
 
+    def retrofit_version="2.6.1"
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
+
+    def glide_version="4.9.0"
+    implementation "com.github.bumptech.glide:glide:$glide_version"
+    kapt "com.github.bumptech.glide:compiler:$glide_version"
+
     implementation "com.google.android.material:material:1.1.0-alpha09"
 
     implementation 'joda-time:joda-time:2.10.3'

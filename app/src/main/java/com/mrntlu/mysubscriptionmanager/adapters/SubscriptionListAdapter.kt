@@ -71,48 +71,72 @@ class SubscriptionListAdapter:RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if (holder is SubscriptionViewHolder){
-            val subscription=subscriptionList.get(position)
+        if (holder is SubscriptionViewHolder) {
+            val subscription = subscriptionList.get(position)
 
-            val priceTag="${subscription.price} ${subscription.currency.symbol}"
-            var paymentDate=DateTime(subscription.paymentDate)
-            var daysLeft= Days.daysBetween(DateTime(Date()),paymentDate).days
+            val priceTag = "${subscription.price} ${subscription.currency.symbol}"
+            var paymentDate = DateTime(subscription.paymentDate)
+            var daysLeft = Days.daysBetween(DateTime(Date()), paymentDate).days
 
-            val countDown:String
-            if (daysLeft<0){
-                while (daysLeft<0) {
+            val countDown: String
+            var totalPaid = subscription.totalPaid
+            if (daysLeft < 0) {
+                while (daysLeft < 0) {
                     paymentDate = when (subscription.frequencyType) {
                         FrequencyType.DAY -> paymentDate + subscription.frequency.days()
                         FrequencyType.MONTH -> paymentDate + subscription.frequency.months()
                         FrequencyType.YEAR -> paymentDate + subscription.frequency.years()
                     }
-                    daysLeft= Days.daysBetween(DateTime(Date()),paymentDate).days
+                    daysLeft = Days.daysBetween(DateTime(Date()), paymentDate).days
+                    totalPaid += subscription.price
                 }
-                val totalPaid=subscription.totalPaid+subscription.price
-                subscriptionManager.resetPaymentDate(subscription.copy(totalPaid =totalPaid ,paymentDate = paymentDate.toDate()))
-                countDown=countDownController(daysLeft)
-            }else{
-                countDown=countDownController(daysLeft)
+                subscriptionManager.resetPaymentDate(
+                    subscription.copy(
+                        totalPaid = totalPaid,
+                        paymentDate = paymentDate.toDate()
+                    )
+                )
+                countDown = countDownController(daysLeft)
+            } else {
+                countDown = countDownController(daysLeft)
             }
 
-            if (isDark(subscription.color)){
-                holder.itemView.nameText.setTextColor(ContextCompat.getColor(holder.itemView.context,R.color.White))
-                holder.itemView.priceText.setTextColor(ContextCompat.getColor(holder.itemView.context,R.color.White))
-            } else{
-                holder.itemView.nameText.setTextColor(ContextCompat.getColor(holder.itemView.context,R.color.Black))
-                holder.itemView.priceText.setTextColor(ContextCompat.getColor(holder.itemView.context,R.color.Black))
+            if (isDark(subscription.color)) {
+                holder.itemView.nameText.setTextColor(
+                    ContextCompat.getColor(
+                        holder.itemView.context,
+                        R.color.White
+                    )
+                )
+                holder.itemView.priceText.setTextColor(
+                    ContextCompat.getColor(
+                        holder.itemView.context,
+                        R.color.White
+                    )
+                )
+            } else {
+                holder.itemView.nameText.setTextColor(
+                    ContextCompat.getColor(
+                        holder.itemView.context,
+                        R.color.Black
+                    )
+                )
+                holder.itemView.priceText.setTextColor(
+                    ContextCompat.getColor(
+                        holder.itemView.context,
+                        R.color.Black
+                    )
+                )
             }
 
             holder.itemView.subscriptionCard.setCardBackgroundColor(subscription.color)
-            holder.itemView.nameText.text=subscription.name
-            holder.itemView.priceText.text=priceTag
-            holder.itemView.countdownText.text=countDown
+            holder.itemView.nameText.text = subscription.name
+            holder.itemView.priceText.text = priceTag
+            holder.itemView.countdownText.text = countDown
 
             holder.itemView.setOnClickListener {
                 subscriptionManager.onClicked(subscription)
             }
-        }else if (holder is NoItemViewHolder){
-
         }
     }
 
