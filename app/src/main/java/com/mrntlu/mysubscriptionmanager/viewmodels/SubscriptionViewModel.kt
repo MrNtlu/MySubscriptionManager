@@ -6,9 +6,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.mrntlu.mysubscriptionmanager.interfaces.CoroutinesHandler
+import com.mrntlu.mysubscriptionmanager.interfaces.ExchangeRateHandler
 import com.mrntlu.mysubscriptionmanager.models.Subscription
 import com.mrntlu.mysubscriptionmanager.models.SubscriptionViewState
 import com.mrntlu.mysubscriptionmanager.repository.SubscriptionRepository
+import com.mrntlu.mysubscriptionmanager.service.response.ExchangeResponse
 import com.mrntlu.mysubscriptionmanager.ui.fragments.OrderType
 import com.mrntlu.mysubscriptionmanager.ui.fragments.SortingType
 import com.mrntlu.mysubscriptionmanager.utils.printLog
@@ -42,6 +44,7 @@ class SubscriptionViewModel(application: Application):AndroidViewModel(applicati
     }
 
     fun updateSubscription(subscription: Subscription, coroutinesHandler: CoroutinesHandler) {
+        mJob=Job()
         mJob=viewModelScope.launch(Dispatchers.IO){
             val job=withTimeoutOrNull(TIME_OUT) {
                 delay(500L)
@@ -58,6 +61,7 @@ class SubscriptionViewModel(application: Application):AndroidViewModel(applicati
     }
 
     fun deleteSubscription(subscription: Subscription, coroutinesHandler: CoroutinesHandler) {
+        mJob=Job()
         mJob=viewModelScope.launch(Dispatchers.IO){
             val job=withTimeoutOrNull(TIME_OUT) {
                 subscriptionRepository.deleteSubscription(subscription)

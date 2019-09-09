@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "1d312f966d521e8e2793fd37fe6189f0",
+    "identityHash": "3f6c97f78473516ec3776a5c7a044ca2",
     "entities": [
       {
         "tableName": "subscriptions",
@@ -83,12 +83,14 @@
         },
         "indices": [
           {
-            "name": "index_subscriptions_name",
+            "name": "index_subscriptions_name_price_payment_date",
             "unique": false,
             "columnNames": [
-              "name"
+              "name",
+              "price",
+              "payment_date"
             ],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_subscriptions_name` ON `${TABLE_NAME}` (`name`)"
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_subscriptions_name_price_payment_date` ON `${TABLE_NAME}` (`name`, `price`, `payment_date`)"
           }
         ],
         "foreignKeys": []
@@ -97,7 +99,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1d312f966d521e8e2793fd37fe6189f0')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '3f6c97f78473516ec3776a5c7a044ca2')"
     ]
   }
 }

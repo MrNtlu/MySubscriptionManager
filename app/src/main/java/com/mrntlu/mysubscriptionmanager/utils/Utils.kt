@@ -14,6 +14,8 @@ import org.joda.time.DateTime
 import java.text.DateFormat
 import java.util.*
 import androidx.core.graphics.ColorUtils
+import com.mrntlu.mysubscriptionmanager.models.Exchange
+import com.mrntlu.mysubscriptionmanager.service.response.ExchangeRateResponse
 
 object Constants{
     val THEME_PREF_NAME="theme_code"
@@ -29,6 +31,14 @@ fun View.setGone(){
 
 fun View.setVisible(){
     this.visibility=View.VISIBLE
+}
+
+fun ExchangeRateResponse.toExchange(): Exchange {
+    return Exchange(UUID.randomUUID().toString(),this.EUR,this.RUB,this.GBP,this.KRW,this.JPY,this.TRY,Date())
+}
+
+fun Exchange.toExchangeRateResponse():ExchangeRateResponse{
+    return ExchangeRateResponse(this.EUR,this.RUB,this.GBP,this.KRW,this.JPY,this.TRY)
 }
 
 fun String.toEditable(): Editable =  Editable.Factory.getInstance().newEditable(this)

@@ -25,7 +25,7 @@ enum class FrequencyType(val code:Int){
 @Parcelize
 @Entity(
     tableName = "subscriptions",
-    indices = [Index(value = ["name"], unique = false)]
+    indices = [Index(value = ["name","price","payment_date"], unique = false)]
 )
 data class Subscription(
     @PrimaryKey(autoGenerate = false) val id: String,
