@@ -12,19 +12,17 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 
 import com.mrntlu.mysubscriptionmanager.R
+import com.mrntlu.mysubscriptionmanager.interfaces.CoroutinesHandler
 import com.mrntlu.mysubscriptionmanager.models.Subscription
 import com.mrntlu.mysubscriptionmanager.models.SubscriptionViewState
 import com.mrntlu.mysubscriptionmanager.ui.MainActivity
-import com.mrntlu.mysubscriptionmanager.utils.dateFormatLong
-import com.mrntlu.mysubscriptionmanager.utils.isEmptyOrBlank
-import com.mrntlu.mysubscriptionmanager.utils.printLog
-import com.mrntlu.mysubscriptionmanager.utils.setGone
+import com.mrntlu.mysubscriptionmanager.utils.*
 import com.mrntlu.mysubscriptionmanager.viewmodels.SubscriptionViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_subscription_view.*
 import java.util.*
 
-class SubscriptionViewFragment : Fragment() {
+class SubscriptionViewFragment : Fragment(), CoroutinesHandler {
 
     private lateinit var mSubscription:Subscription
     private lateinit var navController: NavController
@@ -57,6 +55,23 @@ class SubscriptionViewFragment : Fragment() {
             viewModel.setViewState(SubscriptionViewState.UPDATE)
             navController.navigate(R.id.action_subView_to_sub,bundle)
         }
+        setBottomAppbarMenuListeners(activity)
+    }
+
+    private fun setBottomAppbarMenuListeners(activity: MainActivity) {
+        activity.bottomAppBar.setOnMenuItemClickListener {
+            when(it.itemId){
+                R.id.appbarDelete->{
+                    val dialogBuilder = createDialog(activity,"Do you want to delete this item?")
+                    dialogBuilder.setPositiveButton("Yes") { _, _ ->
+                        viewModel.deleteSubscription(mSubscription,this)
+                    }
+                    val alert = dialogBuilder.create()
+                    alert.show()
+                }
+            }
+            true
+        }
     }
 
     private fun setData() {
@@ -78,5 +93,25 @@ class SubscriptionViewFragment : Fragment() {
             paymentMethodTextView.setGone()
             paymentMethodViewText.setGone()
         }
+    }
+
+//Coroutines Handler
+    override fun onSuccess(message:String) {
+        context?.let {
+            showToast(it, message)
+            navController.popBackStack()
+        }
+    }
+
+    override fun onError(exception: String) {
+        context?.let {
+            showToast(it, exception)
+            navController.popBackStack()
+        }
+    }
+
+    override fun onStop() {
+        viewModel.cancelJobs()
+        super.onStop()
     }
 }

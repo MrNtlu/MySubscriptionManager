@@ -45,13 +45,12 @@ class ExchangeViewModel(application: Application): AndroidViewModel(application)
         mJob=Job()
         mJob=viewModelScope.launch(Dispatchers.IO){
             val job= withTimeoutOrNull(TIME_OUT){
+                printLog(message = "UpdateExchange $exchange")
                 exchangeRepository.updateExchange(exchange)
             }
             withContext(Dispatchers.Main){
                 if (job==null){
                     exchangeRateHandler.onError("Timed out!")
-                }else{
-                    exchangeRateHandler.onInsertSucess("Success.", exchange)
                 }
             }
         }

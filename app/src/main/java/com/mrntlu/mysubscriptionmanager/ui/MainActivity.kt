@@ -1,5 +1,9 @@
 package com.mrntlu.mysubscriptionmanager.ui
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
@@ -11,15 +15,13 @@ import com.google.android.material.bottomappbar.BottomAppBar
 import com.mrntlu.mysubscriptionmanager.R
 import com.mrntlu.mysubscriptionmanager.interfaces.ExchangeRateHandler
 import com.mrntlu.mysubscriptionmanager.models.Exchange
+import com.mrntlu.mysubscriptionmanager.persistance.ExchangeDatabase
 import com.mrntlu.mysubscriptionmanager.service.response.ExchangeRateResponse
 import com.mrntlu.mysubscriptionmanager.ui.fragments.SubscriptionFragment
 import com.mrntlu.mysubscriptionmanager.ui.fragments.SubscriptionListFragment
 import com.mrntlu.mysubscriptionmanager.ui.fragments.SubscriptionStatsFragment
 import com.mrntlu.mysubscriptionmanager.ui.fragments.SubscriptionViewFragment
-import com.mrntlu.mysubscriptionmanager.utils.Constants
-import com.mrntlu.mysubscriptionmanager.utils.createDialog
-import com.mrntlu.mysubscriptionmanager.utils.printLog
-import com.mrntlu.mysubscriptionmanager.utils.toExchange
+import com.mrntlu.mysubscriptionmanager.utils.*
 import com.mrntlu.mysubscriptionmanager.viewmodels.ExchangeViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import org.joda.time.DateTime
@@ -57,14 +59,17 @@ class MainActivity : AppCompatActivity(), ExchangeRateHandler {
                     printLog(message = "It is null fetching...")
                     viewModel.fetchExchangeRates(this)
                 }
+                !isInternetAvailable(this) ->{
+                    printLog(message = "No internet $it ${it.cacheDate}")
+                    exchangeRate=it
+                }
                 Days.daysBetween(DateTime(it.cacheDate),DateTime(Date())).days>0 -> {
-                    printLog(message = Days.daysBetween(DateTime(Date()),DateTime(it.cacheDate)).days.toString())
+                    printLog(message = "Days remained ${Days.daysBetween(DateTime(it.cacheDate),DateTime(Date())).days}")
                     viewModel.fetchExchangeRates(this)
                 }
                 else -> {
-                    printLog(message = Days.daysBetween(DateTime(Date()),DateTime(it.cacheDate)).days.toString())
-                    printLog(message = Days.daysBetween(DateTime(it.cacheDate),DateTime(Date())).days.toString())
                     printLog(message = "DB resource $it ${it.cacheDate}")
+                    exchangeRate=it
                 }
             }
         })
@@ -103,7 +108,7 @@ class MainActivity : AppCompatActivity(), ExchangeRateHandler {
             }
             is SubscriptionViewFragment->{
                 bottomAppBar.fabAlignmentMode= BottomAppBar.FAB_ALIGNMENT_MODE_END
-                setBottomAppBarItems(null,R.menu.subs_appbar_edit_menu,R.drawable.ic_edit_black_24dp)
+                setBottomAppBarItems(null,R.menu.subs_appbar_view_menu,R.drawable.ic_edit_black_24dp)
             }
             is SubscriptionStatsFragment->{
                 bottomAppBar.fabAlignmentMode= BottomAppBar.FAB_ALIGNMENT_MODE_END
@@ -120,16 +125,11 @@ class MainActivity : AppCompatActivity(), ExchangeRateHandler {
     }
 
     override fun onFetchSucess(message: String, exchangeResponse: ExchangeRateResponse) {
-        printLog(message="$exchangeResponse onfetch")
+        printLog(message="onfetch $exchangeResponse")
         viewModel.updateExchange(exchangeResponse.toExchange(),this)
     }
 
-    override fun onInsertSucess(message: String, exchange: Exchange) {
-        printLog(message="$exchange onInsert")
-        exchangeRate=exchange
-    }
-
     override fun onError(exception: String) {
-        printLog(message = exception)
+        printLog(message = "Error $exception")
     }
 }

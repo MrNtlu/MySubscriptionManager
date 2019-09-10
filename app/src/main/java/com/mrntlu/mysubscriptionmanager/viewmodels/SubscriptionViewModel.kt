@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.mrntlu.mysubscriptionmanager.interfaces.CoroutinesHandler
 import com.mrntlu.mysubscriptionmanager.interfaces.ExchangeRateHandler
+import com.mrntlu.mysubscriptionmanager.models.Currency
 import com.mrntlu.mysubscriptionmanager.models.Subscription
 import com.mrntlu.mysubscriptionmanager.models.SubscriptionViewState
 import com.mrntlu.mysubscriptionmanager.repository.SubscriptionRepository
@@ -80,6 +81,12 @@ class SubscriptionViewModel(application: Application):AndroidViewModel(applicati
 
     fun setViewState(viewState: SubscriptionViewState) {
         this.viewState.value = viewState
+    }
+
+    val defaultCurrency=MutableLiveData<Currency>()
+
+    fun setDefaultCurrency(currency: Currency) {
+        this.defaultCurrency.value = currency
     }
 
     fun cancelJobs(){

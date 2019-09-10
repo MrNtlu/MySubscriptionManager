@@ -10,6 +10,6 @@ interface ExchangeDao {
     @Query("SELECT * FROM exchanges")
     fun getAllExchanges(): LiveData<Exchange>
 
-    @Update(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun updateExchange(exchange: Exchange)
 }

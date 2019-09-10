@@ -13,7 +13,12 @@ enum class Currency (val code:Int,val symbol:String,val flag:Int){
     YEN(3,"¥",R.drawable.jpy),
     WON(4,"₩",R.drawable.krw),
     POUND(5,"£",R.drawable.gbp),
-    RUBLE(6,"\u20BD",R.drawable.rub)
+    RUBLE(6,"\u20BD",R.drawable.rub);
+
+    companion object{
+        private val values = values()
+        fun getByCode(code: Int) = values.first { it.code == code }
+    }
 }
 
 enum class FrequencyType(val code:Int){

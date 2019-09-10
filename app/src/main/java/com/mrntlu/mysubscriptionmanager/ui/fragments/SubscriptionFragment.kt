@@ -30,7 +30,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_subscription.*
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
 
 interface BackPressedCallback{
     fun onBackPressed()
@@ -42,6 +41,7 @@ class SubscriptionFragment : Fragment(), DatePickerDialog.OnDateSetListener, Cor
     private var mSubscription: Subscription? = null
     private lateinit var viewModel: SubscriptionViewModel
     private lateinit var viewState: SubscriptionViewState
+    private lateinit var defaultCurrency: Currency
     private lateinit var navController: NavController
 
     private lateinit var paymentDate:Date
@@ -62,9 +62,8 @@ class SubscriptionFragment : Fragment(), DatePickerDialog.OnDateSetListener, Cor
         viewModel = ViewModelProviders.of(context as AppCompatActivity).get(SubscriptionViewModel::class.java)
         navController= Navigation.findNavController(view)
 
-        setupObservers()
+        setupObservers(view)
         setClickListeners()
-        setSpinners(view)
 
         initBottomAppBar(view.context as MainActivity)
     }
@@ -86,9 +85,6 @@ class SubscriptionFragment : Fragment(), DatePickerDialog.OnDateSetListener, Cor
                     val alert = dialogBuilder.create()
                     alert.show()
                 }
-                VIEW -> {
-                    navController.navigate(R.id.action_sub_to_subsList)
-                }
             }
         }
     }
@@ -97,8 +93,11 @@ class SubscriptionFragment : Fragment(), DatePickerDialog.OnDateSetListener, Cor
         currencySpinner.let {
             val arrayAdapter = CurrencySpinnerAdapter(
                 view.context,
-                Currency.values().toList())
+                Currency.values().toList(),
+                R.color.White,
+                R.color.Black)
             it.adapter = arrayAdapter
+            it.setSelection(if (::defaultCurrency.isInitialized) defaultCurrency.code else Currency.USD.code)
         }
 
         frequencyTypeSpinner.let {
@@ -112,10 +111,15 @@ class SubscriptionFragment : Fragment(), DatePickerDialog.OnDateSetListener, Cor
 
     }
 
-    private fun setupObservers() {
+    private fun setupObservers(view: View) {
         viewModel.viewState.observe(viewLifecycleOwner, Observer {
             viewState = it
-            viewStateController(it)
+            if (it==UPDATE) setData()
+        })
+
+        viewModel.defaultCurrency.observe(viewLifecycleOwner, Observer {
+            defaultCurrency=it
+            setSpinners(view)
         })
     }
 
@@ -197,72 +201,22 @@ class SubscriptionFragment : Fragment(), DatePickerDialog.OnDateSetListener, Cor
         }else mapOf(true to "")
     }
 
-    private fun viewStateController(viewState: SubscriptionViewState) {
-        when (viewState) {
-            VIEW -> {
-                setViews(false)
-                setData()
-            }
-            UPDATE -> {
-                setViews(true)
-                setData()
-            }
-            INSERT -> {
-                setViews(true)
-            }
-        }
-    }
-
     @Suppress("NON_EXHAUSTIVE_WHEN")
     private fun setData() {
         mSubscription?.let {
             priceText.text = it.price.toEditable()
             nameText.text = it.name.toEditable()
             frequencyText.text = it.frequency.toEditable()
-            it.description?.let { desc -> descriptionText.text = desc.toEditable() }
+            descriptionText.text = it.description.toEditable()
 
             colorPicker.setCardBackgroundColor(it.color)
             firstPaymentText.text = it.paymentDate.dateFormatLong().toEditable()
             paymentDate=it.paymentDate
-            it.paymentMethod?.let { method -> paymentMethodText.text = method.toEditable() }
+            paymentMethodText.text = it.paymentMethod.toEditable()
 
-            when(viewState){
-                UPDATE ->{
-                    currencySpinner.setSelection(it.currency.code)
-                    frequencyTypeSpinner.setSelection(it.frequencyType.code)
-                }
-                VIEW ->{
-                    currencyText.text=it.currency.name
-                    frequencyTypeText.text=it.frequencyType.name.toLowerCase(Locale.getDefault())
-                }
-            }
+            currencySpinner.setSelection(it.currency.code)
+            frequencyTypeSpinner.setSelection(it.frequencyType.code)
         }
-    }
-
-    private fun setViews(isEditing: Boolean) {
-        priceText.isEnabled = isEditing
-        nameText.isEnabled = isEditing
-        descriptionText.isEnabled = isEditing
-        frequencyText.isEnabled = isEditing
-        firstPaymentText.isEnabled = isEditing
-        colorPicker.isEnabled = isEditing
-        paymentMethodText.isEnabled = isEditing
-        nameText.isEnabled = isEditing
-
-        firstPaymentText.isClickable = isEditing
-        colorPicker.isClickable = isEditing
-
-        if (isEditing) context?.let {
-            (it as MainActivity).bottomAppBar.replaceMenu(R.menu.subs_appbar_edit_menu)
-        }
-        else context?.let {
-            (it as MainActivity).bottomAppBar.replaceMenu(R.menu.subs_appbar_insert_menu)
-        }
-
-        if (isEditing) currencyText.setGone() else currencyText.setVisible()
-        if (isEditing) currencySpinner.setVisible() else currencySpinner.setGone()
-        if (isEditing) frequencyTypeText.setGone() else frequencyTypeText.setVisible()
-        if (isEditing) frequencyTypeSpinner.setVisible() else frequencyTypeSpinner.setGone()
     }
 
     private fun showDatePickerDialog(view: View) {
@@ -291,7 +245,10 @@ class SubscriptionFragment : Fragment(), DatePickerDialog.OnDateSetListener, Cor
         context?.let {
             showToast(it, message)
             when(viewState){
-                UPDATE -> viewModel.setViewState(VIEW)
+                UPDATE -> {
+                    val bundle= bundleOf("subscription" to mSubscription)
+                    navController.navigate(R.id.action_sub_to_subView,bundle)
+                }
                 else -> navController.navigate(R.id.action_sub_to_subsList)
             }
         }

@@ -15,7 +15,9 @@ import com.mrntlu.mysubscriptionmanager.interfaces.SubscriptionManager
 import com.mrntlu.mysubscriptionmanager.models.Currency
 import com.mrntlu.mysubscriptionmanager.models.FrequencyType
 import com.mrntlu.mysubscriptionmanager.models.Subscription
-import com.mrntlu.mysubscriptionmanager.utils.dateFormatLong
+import com.mrntlu.mysubscriptionmanager.ui.MainActivity
+import com.mrntlu.mysubscriptionmanager.utils.getCurrencyRateFromExchange
+import com.mrntlu.mysubscriptionmanager.utils.getExchangeRate
 import com.mrntlu.mysubscriptionmanager.utils.isDark
 import com.mrntlu.mysubscriptionmanager.utils.printLog
 import kotlinx.android.synthetic.main.cell_subscriptions.view.*
@@ -31,6 +33,7 @@ class SubscriptionListAdapter:RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val SUBSCRIPTION_HOLDER:Int=2
 
     private lateinit var subscriptionManager: SubscriptionManager
+    private lateinit var defaultCurrency: Currency
     private var isAdapterSet:Boolean=false
     private var subscriptionList:ArrayList<Subscription> = arrayListOf()
 
@@ -64,6 +67,10 @@ class SubscriptionListAdapter:RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         this.subscriptionManager=subscriptionManager
     }
 
+    fun setDefaultCurrency(currency: Currency){
+        defaultCurrency=currency
+    }
+
     override fun getItemCount(): Int = if (isAdapterSet)(if (subscriptionList.size==0) 1 else subscriptionList.size) else 1
 
 
@@ -72,9 +79,16 @@ class SubscriptionListAdapter:RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is SubscriptionViewHolder) {
-            val subscription = subscriptionList.get(position)
+            val subscription = subscriptionList[position]
 
             val priceTag = "${subscription.price} ${subscription.currency.symbol}"
+            if (defaultCurrency!=subscription.currency) {
+                //TODO set
+                printLog(message = "Currency: ${subscription.currency} Rate: ${getCurrencyRateFromExchange(subscription.currency,(holder.itemView.context as MainActivity).getExchangeRate())}")
+                printLog(message = "Default currency $defaultCurrency Rate: ${getCurrencyRateFromExchange(defaultCurrency,(holder.itemView.context as MainActivity).getExchangeRate())}")
+                printLog(message = "Get rate ${getExchangeRate(getCurrencyRateFromExchange(subscription.currency,(holder.itemView.context as MainActivity).getExchangeRate()),
+                    getCurrencyRateFromExchange(defaultCurrency,(holder.itemView.context as MainActivity).getExchangeRate()))}")
+            }
             var paymentDate = DateTime(subscription.paymentDate)
             var daysLeft = Days.daysBetween(DateTime(Date()), paymentDate).days
 

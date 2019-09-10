@@ -2,6 +2,8 @@ package com.mrntlu.mysubscriptionmanager.utils
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.text.Editable
 import android.util.Log
 import android.view.View
@@ -14,15 +16,17 @@ import org.joda.time.DateTime
 import java.text.DateFormat
 import java.util.*
 import androidx.core.graphics.ColorUtils
+import com.mrntlu.mysubscriptionmanager.models.Currency
 import com.mrntlu.mysubscriptionmanager.models.Exchange
 import com.mrntlu.mysubscriptionmanager.service.response.ExchangeRateResponse
 
 object Constants{
-    val THEME_PREF_NAME="theme_code"
-    val ORDER_PREF_NAME="order_type"
-    val SORT_PREF_NAME="sort_type"
-    val DARK_THEME=0
-    val LIGHT_THEME=1
+    const val THEME_PREF_NAME="theme_code"
+    const val ORDER_PREF_NAME="order_type"
+    const val SORT_PREF_NAME="sort_type"
+    const val CURRENCY_PREF_NAME="default_currency"
+    const val DARK_THEME=0
+    const val LIGHT_THEME=1
 }
 
 fun View.setGone(){
@@ -34,7 +38,7 @@ fun View.setVisible(){
 }
 
 fun ExchangeRateResponse.toExchange(): Exchange {
-    return Exchange(UUID.randomUUID().toString(),this.EUR,this.RUB,this.GBP,this.KRW,this.JPY,this.TRY,Date())
+    return Exchange("0",this.EUR,this.RUB,this.GBP,this.KRW,this.JPY,this.TRY,Date())
 }
 
 fun Exchange.toExchangeRateResponse():ExchangeRateResponse{
@@ -85,3 +89,33 @@ fun setIntPrefs(sharedPreferences:SharedPreferences,prefName:String,value:Int){
 fun isDark(color: Int): Boolean {
     return ColorUtils.calculateLuminance(color) < 0.5
 }
+
+fun isInternetAvailable(context: Context): Boolean {
+    var result = false
+    val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
+    cm?.run {
+        cm.getNetworkCapabilities(cm.activeNetwork)?.run {
+            result = when {
+                hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+                hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+                hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
+                else -> false
+            }
+        }
+    }
+    return result
+}
+
+fun getCurrencyRateFromExchange(currency: Currency,exchange: Exchange):Double{
+    return when(currency){
+        Currency.EURO -> exchange.EUR
+        Currency.USD -> 1.0
+        Currency.TRY -> exchange.TRY
+        Currency.YEN -> exchange.JPY
+        Currency.WON -> exchange.KRW
+        Currency.POUND -> exchange.GBP
+        Currency.RUBLE -> exchange.RUB
+    }
+}
+
+fun getExchangeRate(targetRate:Double,defaultCurrencyRate:Double)= targetRate/defaultCurrencyRate

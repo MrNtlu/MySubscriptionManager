@@ -47,6 +47,26 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/defaultCurrencySheet"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:gravity="center_vertical"
+        android:background="?attr/selectableItemBackground"
+        android:orientation="horizontal"
+        android:padding="12dp">
+        <ImageView
+            android:layout_width="48dp"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_monetization_on_black_24dp"
+            android:tint="?attr/textcolor" />
+        <Spinner
+            android:id="@+id/defaultCurrencySpinner"
+            android:layout_marginStart="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/deleteAllSheet"
         android:layout_width="match_parent"
         android:layout_height="56dp"
