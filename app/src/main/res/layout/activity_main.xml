@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?attr/backgroundcolor"
     tools:context=".ui.MainActivity">
 
     <fragment
@@ -12,8 +13,7 @@
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:defaultNavHost="true"
-        app:navGraph="@navigation/main_nav_graph"/>
+        app:defaultNavHost="true"/>
     <com.google.android.material.bottomappbar.BottomAppBar
         android:theme="@style/Theme.MaterialComponents"
         android:id="@+id/bottomAppBar"
@@ -34,5 +34,12 @@
         android:tint="@color/White"
         android:src="@drawable/ic_add_black_24dp"
         app:backgroundTint="#f64f59" />
+
+    <include
+        android:id="@+id/activityProgressLayout"
+        layout="@layout/progress_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -24,7 +24,6 @@ import com.mrntlu.mysubscriptionmanager.interfaces.SubscriptionManager
 import com.mrntlu.mysubscriptionmanager.models.Currency
 import com.mrntlu.mysubscriptionmanager.models.Subscription
 import com.mrntlu.mysubscriptionmanager.models.SubscriptionViewState
-import com.mrntlu.mysubscriptionmanager.persistance.SubscriptionDatabase
 import com.mrntlu.mysubscriptionmanager.ui.MainActivity
 import com.mrntlu.mysubscriptionmanager.ui.fragments.OrderType.*
 import com.mrntlu.mysubscriptionmanager.ui.fragments.SortingType.*
@@ -77,13 +76,13 @@ class SubscriptionListFragment : Fragment(), SubscriptionManager {
     private var limit=10
     private lateinit var defaultCurrency:Currency
 
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_subscription_list, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setHasOptionsMenu(true)
         navController=Navigation.findNavController(view)
         viewModel=ViewModelProviders.of(context as AppCompatActivity).get(SubscriptionViewModel::class.java)
 
@@ -144,12 +143,20 @@ class SubscriptionListFragment : Fragment(), SubscriptionManager {
             override fun onNothingSelected(p0: AdapterView<*>?) {}
 
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
-                defaultCurrency=Currency.getByCode(position)
-                viewModel.setDefaultCurrency(defaultCurrency)
-                setIntPrefs(defaultCurrencyPref,Constants.CURRENCY_PREF_NAME,defaultCurrency.code)
-                navigationSheetDialog.dismiss()
+                if (defaultCurrency!=Currency.getByCode(position)) {
+                    defaultCurrency = Currency.getByCode(position)
+                    viewModel.setDefaultCurrency(defaultCurrency)
+                    setIntPrefs(
+                        defaultCurrencyPref,
+                        Constants.CURRENCY_PREF_NAME,
+                        defaultCurrency.code
+                    )
+                    if (::adapter.isInitialized) {
+                        adapter.setDefaultCurrency(defaultCurrency)
+                        adapter.notifyDataSetChanged()
+                    }
+                }
             }
-
         }
 
         navigationSheetDialog.themeChangeSheet.setOnClickListener {
@@ -163,6 +170,15 @@ class SubscriptionListFragment : Fragment(), SubscriptionManager {
             (context as AppCompatActivity).finish()
             navigationSheetDialog.dismiss()
         }
+
+        if ((view.context as MainActivity).getExchangeRate()!=null) {
+            navigationSheetDialog.updateExchangeSheet.setOnClickListener {
+                val bundle= bundleOf("defaultCurrency" to defaultCurrency.code)
+                navController.navigate(R.id.action_subsList_to_rate,bundle)
+                navigationSheetDialog.dismiss()
+            }
+        }else navigationSheetDialog.updateExchangeSheet.setGone()
+
 
         navigationSheetDialog.deleteAllSheet.setOnClickListener {
             showToast(it.context,"Delete all pressed.")

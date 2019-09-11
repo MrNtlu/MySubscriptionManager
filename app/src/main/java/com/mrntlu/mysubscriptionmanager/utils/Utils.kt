@@ -118,4 +118,9 @@ fun getCurrencyRateFromExchange(currency: Currency,exchange: Exchange):Double{
     }
 }
 
-fun getExchangeRate(targetRate:Double,defaultCurrencyRate:Double)= targetRate/defaultCurrencyRate
+fun getExchangeRateOfCurrency(targetCurrency: Currency,defaultCurrency: Currency,exchange: Exchange):Double{
+    val targetRate= getCurrencyRateFromExchange(targetCurrency,exchange)
+    val defaultCurrencyRate= getCurrencyRateFromExchange(defaultCurrency,exchange)
+
+    return targetRate/defaultCurrencyRate
+}

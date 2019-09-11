@@ -31,6 +31,13 @@
             app:popExitAnim="@anim/slide_out_right"
             app:exitAnim="@anim/slide_out_left"
             app:enterAnim="@anim/slide_in_right"/>
+        <action
+            android:id="@+id/action_subsList_to_rate"
+            app:destination="@id/exchangeRateFragment"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:enterAnim="@anim/slide_in_right"/>
     </fragment>
     <fragment
         android:id="@+id/subscriptionFragment"
@@ -68,10 +75,30 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_subView_to_subsList"
+            app:destination="@id/subscriptionListFragment"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right"
+            app:popEnterAnim="@anim/slide_in_right"
+            app:popExitAnim="@anim/slide_out_left" />
     </fragment>
     <fragment
         android:id="@+id/subscriptionStatsFragment"
         android:name="com.mrntlu.mysubscriptionmanager.ui.fragments.SubscriptionStatsFragment"
         android:label="fragment_subscription_stats"
         tools:layout="@layout/fragment_subscription_stats" />
+    <fragment
+        android:id="@+id/exchangeRateFragment"
+        android:name="com.mrntlu.mysubscriptionmanager.ui.fragments.ExchangeRateFragment"
+        tools:layout="@layout/fragment_exchange_rate"
+        android:label="ExchangeRateFragment" >
+        <action
+            android:id="@+id/action_rate_to_subsList"
+            app:destination="@id/subscriptionListFragment"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right"
+            app:popEnterAnim="@anim/slide_in_right"
+            app:popExitAnim="@anim/slide_out_left" />
+    </fragment>
 </navigation>

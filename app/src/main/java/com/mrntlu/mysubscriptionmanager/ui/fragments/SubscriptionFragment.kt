@@ -97,7 +97,8 @@ class SubscriptionFragment : Fragment(), DatePickerDialog.OnDateSetListener, Cor
                 R.color.White,
                 R.color.Black)
             it.adapter = arrayAdapter
-            it.setSelection(if (::defaultCurrency.isInitialized) defaultCurrency.code else Currency.USD.code)
+            if (viewState!=UPDATE) it.setSelection(if (::defaultCurrency.isInitialized) defaultCurrency.code else Currency.USD.code)
+            printLog(message = "$viewState ${it.selectedItemPosition}")
         }
 
         frequencyTypeSpinner.let {
@@ -112,14 +113,16 @@ class SubscriptionFragment : Fragment(), DatePickerDialog.OnDateSetListener, Cor
     }
 
     private fun setupObservers(view: View) {
-        viewModel.viewState.observe(viewLifecycleOwner, Observer {
-            viewState = it
-            if (it==UPDATE) setData()
-        })
-
         viewModel.defaultCurrency.observe(viewLifecycleOwner, Observer {
             defaultCurrency=it
-            setSpinners(view)
+        })
+
+        viewModel.viewState.observe(viewLifecycleOwner, Observer {
+            viewState = it
+            if (it==UPDATE) {
+                setSpinners(view)
+                setData()
+            }
         })
     }
 
@@ -214,7 +217,9 @@ class SubscriptionFragment : Fragment(), DatePickerDialog.OnDateSetListener, Cor
             paymentDate=it.paymentDate
             paymentMethodText.text = it.paymentMethod.toEditable()
 
+            printLog(message = "${it.currency} ${it.currency.code}")
             currencySpinner.setSelection(it.currency.code)
+            printLog(message = currencySpinner.selectedItemPosition.toString())
             frequencyTypeSpinner.setSelection(it.frequencyType.code)
         }
     }
