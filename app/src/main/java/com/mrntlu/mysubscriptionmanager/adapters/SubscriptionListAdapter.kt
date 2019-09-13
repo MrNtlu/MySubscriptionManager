@@ -2,6 +2,7 @@ package com.mrntlu.mysubscriptionmanager.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.github.debop.kodatimes.days
@@ -113,33 +114,8 @@ class SubscriptionListAdapter:RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 countDown = countDownController(daysLeft)
             }
 
-            if (isDark(subscription.color)) {
-                holder.itemView.nameText.setTextColor(
-                    ContextCompat.getColor(
-                        holder.itemView.context,
-                        R.color.White
-                    )
-                )
-                holder.itemView.priceText.setTextColor(
-                    ContextCompat.getColor(
-                        holder.itemView.context,
-                        R.color.White
-                    )
-                )
-            } else {
-                holder.itemView.nameText.setTextColor(
-                    ContextCompat.getColor(
-                        holder.itemView.context,
-                        R.color.Black
-                    )
-                )
-                holder.itemView.priceText.setTextColor(
-                    ContextCompat.getColor(
-                        holder.itemView.context,
-                        R.color.Black
-                    )
-                )
-            }
+            setTextColors(listOf(holder.itemView.nameText,holder.itemView.priceText,holder.itemView.equivalentPriceText),
+                isDark(subscription.color))
 
             holder.itemView.subscriptionCard.setCardBackgroundColor(subscription.color)
             holder.itemView.nameText.text = subscription.name
@@ -149,6 +125,17 @@ class SubscriptionListAdapter:RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             holder.itemView.setOnClickListener {
                 subscriptionManager.onClicked(subscription)
             }
+        }
+    }
+
+    private fun setTextColors(textList:List<TextView>,isDark:Boolean){
+        for (textview in textList){
+            textview.setTextColor(
+                ContextCompat.getColor(
+                    textview.context,
+                    if (isDark) R.color.White else R.color.Black
+                )
+            )
         }
     }
 

@@ -13,7 +13,7 @@ import com.mrntlu.mysubscriptionmanager.models.converters.DateConverter
 abstract class ExchangeDatabase:RoomDatabase() {
 
     companion object{
-        public const val DATABASE_NAME="exchanges_db"
+        const val DATABASE_NAME="exchanges_db"
 
         @Volatile
         private var INSTANCE: ExchangeDatabase? = null

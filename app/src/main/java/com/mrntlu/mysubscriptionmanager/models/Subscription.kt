@@ -7,13 +7,13 @@ import kotlinx.android.parcel.Parcelize
 import java.util.*
 
 enum class Currency (val code:Int,val symbol:String,val flag:Int){
-    EURO(0,"€",R.drawable.eur),
+    EUR(0,"€",R.drawable.eur),
     USD(1,"$",R.drawable.usd),
     TRY(2,"₺",R.drawable.lira),
-    YEN(3,"¥",R.drawable.jpy),
-    WON(4,"₩",R.drawable.krw),
-    POUND(5,"£",R.drawable.gbp),
-    RUBLE(6,"\u20BD",R.drawable.rub);
+    JPY(3,"¥",R.drawable.jpy),
+    KRW(4,"₩",R.drawable.krw),
+    GBP(5,"£",R.drawable.gbp),
+    RUB(6,"\u20BD",R.drawable.rub);
 
     companion object{
         private val values = values()

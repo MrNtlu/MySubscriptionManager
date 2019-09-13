@@ -10,13 +10,12 @@ import com.mrntlu.mysubscriptionmanager.models.converters.DateConverter
 import com.mrntlu.mysubscriptionmanager.models.converters.SubscriptionCurrencyConverter
 import com.mrntlu.mysubscriptionmanager.models.converters.SubscriptionFrequencyConverter
 
-
 @Database(entities = [Subscription::class], version = 1)
 @TypeConverters(DateConverter::class,SubscriptionCurrencyConverter::class,SubscriptionFrequencyConverter::class)
 abstract class SubscriptionDatabase: RoomDatabase() {
 
     companion object{
-        public const val DATABASE_NAME="subscriptions_db"
+        const val DATABASE_NAME="subscriptions_db"
 
         @Volatile
         private var INSTANCE: SubscriptionDatabase? = null

@@ -18,7 +18,7 @@
         android:orientation="horizontal"
         android:padding="12dp"
         android:textStyle="bold"
-        android:text="Options"/>
+        android:text="@string/options"/>
 
     <LinearLayout
         android:id="@+id/themeChangeSheet"
@@ -34,14 +34,15 @@
             android:layout_width="48dp"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_brightness_6_black_24dp"
-            android:tint="?attr/textcolor" />
+            android:tint="?attr/textcolor"
+            tools:ignore="ContentDescription"/>
 
         <TextView
             android:id="@+id/themeChangerText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:text="Enable Dark Theme"
+            android:text="@string/enable_dark_theme"
             android:textColor="?attr/textcolor"
             android:textSize="16sp" />
     </LinearLayout>
@@ -58,7 +59,8 @@
             android:layout_width="48dp"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_monetization_on_black_24dp"
-            android:tint="?attr/textcolor" />
+            android:tint="?attr/textcolor"
+            tools:ignore="ContentDescription"/>
         <Spinner
             android:id="@+id/defaultCurrencySpinner"
             android:layout_marginStart="16dp"
@@ -81,14 +83,15 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
             android:src="@drawable/ic_exchange"
-            android:tint="?attr/textcolor" />
+            android:tint="?attr/textcolor"
+            tools:ignore="ContentDescription"/>
 
         <TextView
             android:id="@+id/exchangeSheetText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:text="Exchage Rates"
+            android:text="@string/exchage_rates"
             android:textColor="?attr/textcolor"
             android:textSize="16sp" />
     </LinearLayout>
@@ -107,7 +110,8 @@
             android:layout_width="48dp"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_delete_black_24dp"
-            android:tint="?attr/textcolor" />
+            android:tint="?attr/textcolor"
+            tools:ignore="ContentDescription"/>
 
         <TextView
             android:layout_marginStart="16dp"
@@ -115,6 +119,6 @@
             android:layout_height="wrap_content"
             android:textSize="16sp"
             android:textColor="?attr/textcolor"
-            android:text="Delete All Subscriptions"/>
+            android:text="@string/delete_all_subscriptions"/>
     </LinearLayout>
 </LinearLayout>

@@ -16,6 +16,7 @@ import org.joda.time.DateTime
 import java.text.DateFormat
 import java.util.*
 import androidx.core.graphics.ColorUtils
+import com.mrntlu.mysubscriptionmanager.R
 import com.mrntlu.mysubscriptionmanager.models.Currency
 import com.mrntlu.mysubscriptionmanager.models.Exchange
 import com.mrntlu.mysubscriptionmanager.service.response.ExchangeRateResponse
@@ -70,7 +71,7 @@ fun printLog(tag: String = "Test",message:String)=Log.d(tag,message)
 fun createDialog(context: Context,message: String): AlertDialog.Builder {
     val dialogBuilder = AlertDialog.Builder(context)
 
-    dialogBuilder.setTitle("Important!")
+    dialogBuilder.setTitle(context.getString(R.string.important_))
     dialogBuilder.setMessage(message).setCancelable(true)
 
     dialogBuilder.setNegativeButton("No"){dialog, _ ->
@@ -108,13 +109,13 @@ fun isInternetAvailable(context: Context): Boolean {
 
 fun getCurrencyRateFromExchange(currency: Currency,exchange: Exchange):Double{
     return when(currency){
-        Currency.EURO -> exchange.EUR
+        Currency.EUR -> exchange.EUR
         Currency.USD -> 1.0
         Currency.TRY -> exchange.TRY
-        Currency.YEN -> exchange.JPY
-        Currency.WON -> exchange.KRW
-        Currency.POUND -> exchange.GBP
-        Currency.RUBLE -> exchange.RUB
+        Currency.JPY -> exchange.JPY
+        Currency.KRW -> exchange.KRW
+        Currency.GBP -> exchange.GBP
+        Currency.RUB -> exchange.RUB
     }
 }
 

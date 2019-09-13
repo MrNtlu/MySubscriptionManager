@@ -11,18 +11,21 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.github.debop.kodatimes.toDateTime
 import com.mrntlu.mysubscriptionmanager.R
 import com.mrntlu.mysubscriptionmanager.adapters.ExchangeRateAdapter
 import com.mrntlu.mysubscriptionmanager.models.Currency
 import com.mrntlu.mysubscriptionmanager.models.Exchange
 import com.mrntlu.mysubscriptionmanager.ui.MainActivity
-import com.mrntlu.mysubscriptionmanager.utils.getCurrencyRateFromExchange
-import com.mrntlu.mysubscriptionmanager.utils.printLog
-import com.mrntlu.mysubscriptionmanager.utils.setGone
-import com.mrntlu.mysubscriptionmanager.utils.setVisible
+import com.mrntlu.mysubscriptionmanager.utils.*
 import com.mrntlu.mysubscriptionmanager.viewmodels.ExchangeViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_exchange_rate.*
+import org.joda.time.DateTime
+import org.joda.time.Hours
+import org.joda.time.Minutes
+import java.util.*
+import kotlin.collections.ArrayList
 
 data class ExchangeRate(val flag:Int,val name:String,val rate:Double)
 
@@ -77,9 +80,25 @@ class ExchangeRateFragment : Fragment(),ExchangeFetchHandler {
     private fun setupObservers(){
         viewModel.getAllExchanges().observe(this, Observer {
             exchangeRate=it
+            exchangeUpdatedText.text=setLastUpdatedTime(exchangeRate)
+
             setExchangeRateList()
             exchangeProgressLayout.setGone()
         })
+    }
+
+    private fun setLastUpdatedTime(exchangeRate: Exchange):String{
+        return when (val hours=Hours.hoursBetween(exchangeRate.cacheDate.toDateTime(),DateTime(Date())).hours) {
+            0 -> {
+                when (val minutes=Minutes.minutesBetween(exchangeRate.cacheDate.toDateTime(),DateTime(Date())).minutes) {
+                    0 -> "Just now."
+                    1 -> "$minutes minute ago."
+                    else -> "$minutes minutes ago."
+                }
+            }
+            1 -> "$hours hour ago."
+            else -> "$hours hours ago"
+        }
     }
 
     private fun setBottomAppbarMenuListeners(activity: MainActivity) {

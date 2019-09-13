@@ -18,7 +18,7 @@
         android:orientation="horizontal"
         android:padding="12dp"
         android:textStyle="bold"
-        android:text="Sorting Options"/>
+        android:text="@string/sorting_options"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/priceLayout"
@@ -37,7 +37,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:text="Price"
+            android:text="@string/price"
             android:textColor="?attr/textcolor"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
@@ -49,7 +49,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="24dp"
-            android:text="Name"
+            android:text="@string/name"
             android:textColor="?attr/textcolor"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
@@ -62,7 +62,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="24dp"
             android:layout_marginBottom="8dp"
-            android:text="Payment Date"
+            android:text="@string/payment_date"
             android:textColor="?attr/textcolor"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -78,7 +78,8 @@
             android:src="@drawable/ic_keyboard_arrow_up_black_24dp"
             app:layout_constraintBottom_toBottomOf="@+id/priceText"
             app:layout_constraintEnd_toStartOf="@+id/priceDescBtn"
-            app:layout_constraintTop_toTopOf="@+id/priceText" />
+            app:layout_constraintTop_toTopOf="@+id/priceText"
+            tools:ignore="ContentDescription" />
 
         <ImageButton
             android:id="@+id/nameAscBtn"
@@ -89,7 +90,8 @@
             android:src="@drawable/ic_keyboard_arrow_up_black_24dp"
             app:layout_constraintBottom_toBottomOf="@+id/nameText"
             app:layout_constraintEnd_toStartOf="@+id/nameDescBtn"
-            app:layout_constraintTop_toTopOf="@+id/nameText" />
+            app:layout_constraintTop_toTopOf="@+id/nameText"
+            tools:ignore="ContentDescription"/>
 
         <ImageButton
             android:id="@+id/paymentDateAscBtn"
@@ -100,7 +102,8 @@
             android:src="@drawable/ic_keyboard_arrow_up_black_24dp"
             app:layout_constraintBottom_toBottomOf="@+id/paymentDateText"
             app:layout_constraintEnd_toStartOf="@+id/paymentDateDescBtn"
-            app:layout_constraintTop_toTopOf="@+id/paymentDateText" />
+            app:layout_constraintTop_toTopOf="@+id/paymentDateText"
+            tools:ignore="ContentDescription"/>
 
         <ImageButton
             android:id="@+id/priceDescBtn"
@@ -111,7 +114,8 @@
             android:src="@drawable/ic_keyboard_arrow_down_black_24dp"
             app:layout_constraintBottom_toBottomOf="@+id/priceText"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/priceText" />
+            app:layout_constraintTop_toTopOf="@+id/priceText"
+            tools:ignore="ContentDescription"/>
 
         <ImageButton
             android:id="@+id/nameDescBtn"
@@ -122,7 +126,8 @@
             android:src="@drawable/ic_keyboard_arrow_down_black_24dp"
             app:layout_constraintBottom_toBottomOf="@+id/nameText"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/nameText" />
+            app:layout_constraintTop_toTopOf="@+id/nameText"
+            tools:ignore="ContentDescription"/>
 
         <ImageButton
             android:id="@+id/paymentDateDescBtn"
@@ -133,7 +138,8 @@
             android:src="@drawable/ic_keyboard_arrow_down_black_24dp"
             app:layout_constraintBottom_toBottomOf="@+id/paymentDateText"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/paymentDateText" />
+            app:layout_constraintTop_toTopOf="@+id/paymentDateText"
+            tools:ignore="ContentDescription"/>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

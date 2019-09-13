@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity(), ExchangeRateHandler {
     override fun onBackPressed() {
         when (val f=nav_host_fragment.childFragmentManager.findFragmentById(R.id.nav_host_fragment)) {
             is SubscriptionListFragment -> {
-                val dialogBuilder = createDialog(this,"Do you want to exit?")
+                val dialogBuilder = createDialog(this,getString(R.string.do_you_want_to_exit))
                 dialogBuilder.setPositiveButton("Yes") { _, _ ->
                     super.onBackPressed()
                 }.create().show()

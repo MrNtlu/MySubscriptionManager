@@ -77,10 +77,6 @@ class SubscriptionFragment : Fragment(), DatePickerDialog.OnDateSetListener, Cor
                     val dialogBuilder = createDialog(it.context,"Do you want to discard changes?")
                     dialogBuilder.setPositiveButton("Yes") { _, _ ->
                         navController.popBackStack()
-                        /*if (viewState==UPDATE) {
-                            val bundle= bundleOf("subscription" to mSubscription)
-                            navController.navigate(R.id.action_sub_to_subView,bundle)
-                        } else navController.navigate(R.id.action_sub_to_subsList)*/
                     }
                     val alert = dialogBuilder.create()
                     alert.show()
@@ -98,7 +94,6 @@ class SubscriptionFragment : Fragment(), DatePickerDialog.OnDateSetListener, Cor
                 R.color.Black)
             it.adapter = arrayAdapter
             if (viewState!=UPDATE) it.setSelection(if (::defaultCurrency.isInitialized) defaultCurrency.code else Currency.USD.code)
-            printLog(message = "$viewState ${it.selectedItemPosition}")
         }
 
         frequencyTypeSpinner.let {
@@ -122,7 +117,7 @@ class SubscriptionFragment : Fragment(), DatePickerDialog.OnDateSetListener, Cor
             if (it==UPDATE) {
                 setSpinners(view)
                 setData()
-            }
+            }else setSpinners(view)
         })
     }
 
@@ -131,6 +126,12 @@ class SubscriptionFragment : Fragment(), DatePickerDialog.OnDateSetListener, Cor
             when(it.itemId){
                 R.id.appbarSave -> {
                     if (checkRules().keys.toBooleanArray()[0]) {
+                        var totalPaid=0.0
+                        if (viewState==UPDATE){
+                            val rate=getCurrencyRateFromExchange(mSubscription!!.currency,activity.getExchangeRate()!!)/ getCurrencyRateFromExchange(Currency.valueOf(currencySpinner.selectedItem.toString()),activity.getExchangeRate()!!)
+                            totalPaid=String.format(Locale.ENGLISH,"%.2f",(mSubscription!!.totalPaid)/rate).toDouble()
+                        }
+
                         val subscription = Subscription(
                             mSubscription?.id ?: UUID.randomUUID().toString(),
                             nameText.getAsString(),
@@ -145,7 +146,8 @@ class SubscriptionFragment : Fragment(), DatePickerDialog.OnDateSetListener, Cor
                             priceText.getAsString().toDouble(),
                             Currency.valueOf(currencySpinner.selectedItem.toString()),
                             colorPicker.cardBackgroundColor.defaultColor,
-                            paymentMethodText.getAsString()
+                            paymentMethodText.getAsString(),
+                            if (viewState==UPDATE) totalPaid else 0.0
                         )
 
                         progressbarLayout.setVisible()
@@ -217,9 +219,7 @@ class SubscriptionFragment : Fragment(), DatePickerDialog.OnDateSetListener, Cor
             paymentDate=it.paymentDate
             paymentMethodText.text = it.paymentMethod.toEditable()
 
-            printLog(message = "${it.currency} ${it.currency.code}")
             currencySpinner.setSelection(it.currency.code)
-            printLog(message = currencySpinner.selectedItemPosition.toString())
             frequencyTypeSpinner.setSelection(it.frequencyType.code)
         }
     }

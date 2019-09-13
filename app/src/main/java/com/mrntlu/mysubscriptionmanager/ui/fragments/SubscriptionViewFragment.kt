@@ -1,5 +1,9 @@
 package com.mrntlu.mysubscriptionmanager.ui.fragments
 
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -10,9 +14,14 @@ import androidx.core.os.bundleOf
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import com.github.debop.kodatimes.days
+import com.github.debop.kodatimes.months
+import com.github.debop.kodatimes.toDateTime
+import com.github.debop.kodatimes.years
 
 import com.mrntlu.mysubscriptionmanager.R
 import com.mrntlu.mysubscriptionmanager.interfaces.CoroutinesHandler
+import com.mrntlu.mysubscriptionmanager.models.FrequencyType
 import com.mrntlu.mysubscriptionmanager.models.Subscription
 import com.mrntlu.mysubscriptionmanager.models.SubscriptionViewState
 import com.mrntlu.mysubscriptionmanager.ui.MainActivity
@@ -44,8 +53,34 @@ class SubscriptionViewFragment : Fragment(), CoroutinesHandler {
         navController= Navigation.findNavController(view)
         viewModel= ViewModelProviders.of(context as AppCompatActivity).get(SubscriptionViewModel::class.java)
 
+        testStartAlarm(view.context)
         initBottomAppBar(view.context as MainActivity)
         setData()
+    }
+
+    private fun testStartAlarm(context: Context) {
+        val alarmManager=context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent=Intent(context,AlertReceiver::class.java)
+        intent.putExtra("message","${mSubscription.name}'s payment.")
+        intent.putExtra("hashCode",mSubscription.id.hashCode())
+        val pendingIntent=PendingIntent.getBroadcast(context,mSubscription.id.hashCode(),intent,0)
+
+        val paymentInterval = when (mSubscription.frequencyType) {
+            FrequencyType.DAY -> mSubscription.frequency*86400000L
+            FrequencyType.MONTH -> mSubscription.frequency*2592000000L
+            FrequencyType.YEAR -> mSubscription.frequency*31556952000L
+        }
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,mSubscription.paymentDate.toDateTime().millis,paymentInterval,pendingIntent)
+    }
+
+    private fun testCancelAlarm(context: Context){
+        val alarmManager=context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent=Intent(context,AlertReceiver::class.java)
+        intent.putExtra("message","${mSubscription.name}'s payment.")
+        intent.putExtra("hashCode",mSubscription.id.hashCode())
+        val pendingIntent=PendingIntent.getBroadcast(context,mSubscription.id.hashCode(),intent,0)
+
+        alarmManager.cancel(pendingIntent)
     }
 
     private fun initBottomAppBar(activity: MainActivity) {
@@ -62,7 +97,7 @@ class SubscriptionViewFragment : Fragment(), CoroutinesHandler {
         activity.bottomAppBar.setOnMenuItemClickListener {
             when(it.itemId){
                 R.id.appbarDelete->{
-                    val dialogBuilder = createDialog(activity,"Do you want to delete this item?")
+                    val dialogBuilder = createDialog(activity,getString(R.string.do_you_want_to_delete))
                     dialogBuilder.setPositiveButton("Yes") { _, _ ->
                         viewModel.deleteSubscription(mSubscription,this)
                     }

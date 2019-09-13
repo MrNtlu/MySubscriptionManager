@@ -5,6 +5,6 @@
     <item
         android:id="@+id/appbarSort"
         android:icon="@drawable/ic_sort_black_24dp"
-        android:title="Sort"
+        android:title="@string/sort"
         app:showAsAction="ifRoom"/>
 </menu>

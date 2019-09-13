@@ -5,13 +5,8 @@ import androidx.lifecycle.LiveData
 import com.mrntlu.mysubscriptionmanager.models.Subscription
 import com.mrntlu.mysubscriptionmanager.persistance.SubscriptionDao
 import com.mrntlu.mysubscriptionmanager.persistance.SubscriptionDatabase
-import com.mrntlu.mysubscriptionmanager.service.ExchangeService
-import com.mrntlu.mysubscriptionmanager.service.RetrofitClient
-import com.mrntlu.mysubscriptionmanager.service.response.ExchangeResponse
 import com.mrntlu.mysubscriptionmanager.ui.fragments.OrderType
 import com.mrntlu.mysubscriptionmanager.ui.fragments.SortingType
-import retrofit2.Retrofit
-import retrofit2.create
 
 class SubscriptionRepository(application: Application) {
 

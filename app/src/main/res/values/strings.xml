@@ -3,4 +3,36 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="loading">Loading…</string>
+    <string name="name">Name</string>
+    <string name="e_g_udacity_spotify_etc">e.g. Udacity, Spotify etc.</string>
+    <string name="description">Description</string>
+    <string name="_optional">- optional</string>
+    <string name="e_g_monthly_sub_family_plan_etc">e.g. Monthly Sub, Family Plan etc.</string>
+    <string name="every">Every</string>
+    <string name="upcoming_payment">Upcoming Payment</string>
+    <string name="e_g_september_1_2019">e.g. September 1, 2019</string>
+    <string name="pick_a_color">Pick a Color</string>
+    <string name="payment_method">Payment Method</string>
+    <string name="e_g_bank_account_credit_card_etc">e.g. Bank Account, Credit Card etc.</string>
+    <string name="_0_00">0.00</string>
+    <string name="last_updated">Last Updated:</string>
+    <string name="sorting_options">Sorting Options</string>
+    <string name="price">Price</string>
+    <string name="payment_date">Payment Date</string>
+    <string name="options">Options</string>
+    <string name="exchage_rates">Exchage Rates</string>
+    <string name="delete_all_subscriptions">Delete All Subscriptions</string>
+    <string name="enable_dark_theme">Enable Dark Theme</string>
+    <string name="disable_dark_theme">Disable Dark Theme</string>
+    <string name="billing_period">Billing Period</string>
+    <string name="paid_in_total">Paid in Total</string>
+    <string name="sort">Sort</string>
+    <string name="save">Save</string>
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
+    <string name="refresh">Refresh</string>
+    <string name="do_you_want_to_delete">Do you want to delete this item?</string>
+    <string name="do_you_want_to_exit">Do you want to exit?</string>
+    <string name="important_">Important!</string>
 </resources>

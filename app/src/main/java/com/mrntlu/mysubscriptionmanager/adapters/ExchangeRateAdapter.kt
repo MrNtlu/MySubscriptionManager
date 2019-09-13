@@ -27,7 +27,7 @@ class ExchangeRateAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         Glide.with(holder.itemView.context).load(exchangeRate.flag).into(holder.itemView.cellExchangeFlag)
         holder.itemView.cellExchangeNameText.text=exchangeRate.name
-        holder.itemView.cellExchangeRateText.text=String.format(Locale.ENGLISH,"%.4f",exchangeRate.rate)
+        holder.itemView.cellExchangeRateText.text=String.format(Locale.ENGLISH,"%.5f",exchangeRate.rate)
     }
 
     fun setSubscriptionList(exchangeRateList:ArrayList<ExchangeRate>){

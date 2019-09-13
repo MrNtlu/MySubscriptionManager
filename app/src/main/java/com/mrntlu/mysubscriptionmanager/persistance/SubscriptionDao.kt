@@ -3,7 +3,6 @@ package com.mrntlu.mysubscriptionmanager.persistance
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.mrntlu.mysubscriptionmanager.models.Subscription
-import com.mrntlu.mysubscriptionmanager.ui.fragments.SortingType
 
 @Dao
 interface SubscriptionDao {

@@ -122,7 +122,7 @@ class SubscriptionListFragment : Fragment(), SubscriptionManager {
         navigationSheetDialog= BottomSheetDialog(view.context)
         navigationSheetDialog.setContentView(R.layout.navigation_bottom_sheet)
 
-        navigationSheetDialog.themeChangerText.text=if (themePref.getInt(Constants.THEME_PREF_NAME,Constants.LIGHT_THEME)==Constants.LIGHT_THEME) "Enable Dark Theme" else "Disable Dark Theme"
+        navigationSheetDialog.themeChangerText.text=if (themePref.getInt(Constants.THEME_PREF_NAME,Constants.LIGHT_THEME)==Constants.LIGHT_THEME) getString(R.string.enable_dark_theme) else getString(R.string.disable_dark_theme)
 
         navigationSheetDialog.defaultCurrencySpinner.let {
             val sheetColor = TypedValue()
