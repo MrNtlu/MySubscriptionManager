@@ -4,6 +4,7 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -14,11 +15,7 @@ import androidx.core.os.bundleOf
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import com.github.debop.kodatimes.days
-import com.github.debop.kodatimes.months
 import com.github.debop.kodatimes.toDateTime
-import com.github.debop.kodatimes.years
-
 import com.mrntlu.mysubscriptionmanager.R
 import com.mrntlu.mysubscriptionmanager.interfaces.CoroutinesHandler
 import com.mrntlu.mysubscriptionmanager.models.FrequencyType
@@ -36,6 +33,8 @@ class SubscriptionViewFragment : Fragment(), CoroutinesHandler {
     private lateinit var mSubscription:Subscription
     private lateinit var navController: NavController
     private lateinit var viewModel:SubscriptionViewModel
+    private lateinit var alarmPref:SharedPreferences
+    private var alarmStatus=0 //0==alarm not set 1==alarm set
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,35 +52,52 @@ class SubscriptionViewFragment : Fragment(), CoroutinesHandler {
         navController= Navigation.findNavController(view)
         viewModel= ViewModelProviders.of(context as AppCompatActivity).get(SubscriptionViewModel::class.java)
 
-        testStartAlarm(view.context)
+        alarmPref=view.context.getSharedPreferences(Constants.ALARM_PREF_NAME,0)
+        alarmStatus=alarmPref.getInt(mSubscription.id,0)
+        setAlarmButtonText()
+
+        setOnClickListener()
         initBottomAppBar(view.context as MainActivity)
         setData()
     }
 
-    private fun testStartAlarm(context: Context) {
-        val alarmManager=context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent=Intent(context,AlertReceiver::class.java)
-        intent.putExtra("message","${mSubscription.name}'s payment.")
-        intent.putExtra("hashCode",mSubscription.id.hashCode())
-        val pendingIntent=PendingIntent.getBroadcast(context,mSubscription.id.hashCode(),intent,0)
-
-        val paymentInterval = when (mSubscription.frequencyType) {
-            FrequencyType.DAY -> mSubscription.frequency*86400000L
-            FrequencyType.MONTH -> mSubscription.frequency*2592000000L
-            FrequencyType.YEAR -> mSubscription.frequency*31556952000L
+    private fun setOnClickListener() {
+        alarmButton.setOnClickListener {
+            setAlarm(it.context,alarmStatus==0)
+            alarmStatus=if (alarmStatus==0) 1 else 0
+            setIntPrefs(alarmPref,mSubscription.id,alarmStatus)
+            setAlarmButtonText()
         }
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,mSubscription.paymentDate.toDateTime().millis,paymentInterval,pendingIntent)
     }
 
-    private fun testCancelAlarm(context: Context){
+    private fun setAlarmButtonText(){
+        alarmButton.text=if (alarmStatus==0) getString(R.string.set_alarm) else getString(R.string.cancel_alarm)
+        alarmButton.setCompoundDrawablesWithIntrinsicBounds(if (alarmStatus==0) R.drawable.ic_notifications_black_24dp else R.drawable.ic_notifications_off_black_24dp,0,0,0)
+    }
+
+    private fun setAlarm(context: Context,isStarting:Boolean) {
         val alarmManager=context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent=Intent(context,AlertReceiver::class.java)
         intent.putExtra("message","${mSubscription.name}'s payment.")
         intent.putExtra("hashCode",mSubscription.id.hashCode())
         val pendingIntent=PendingIntent.getBroadcast(context,mSubscription.id.hashCode(),intent,0)
 
-        alarmManager.cancel(pendingIntent)
+        if (isStarting) {
+            val paymentInterval = when (mSubscription.frequencyType) {
+                FrequencyType.DAY -> mSubscription.frequency * 86400000L
+                FrequencyType.MONTH -> mSubscription.frequency * 2592000000L
+                FrequencyType.YEAR -> mSubscription.frequency * 31556952000L
+            }
+            alarmManager.setRepeating(
+                AlarmManager.RTC_WAKEUP,
+                mSubscription.paymentDate.toDateTime().millis,
+                paymentInterval,
+                pendingIntent
+            )
+        }else alarmManager.cancel(pendingIntent)
+
     }
+
 
     private fun initBottomAppBar(activity: MainActivity) {
         activity.setBottomAppBar(this)
@@ -99,6 +115,7 @@ class SubscriptionViewFragment : Fragment(), CoroutinesHandler {
                 R.id.appbarDelete->{
                     val dialogBuilder = createDialog(activity,getString(R.string.do_you_want_to_delete))
                     dialogBuilder.setPositiveButton("Yes") { _, _ ->
+                        removeIntPrefs(alarmPref,mSubscription.name)
                         viewModel.deleteSubscription(mSubscription,this)
                     }
                     val alert = dialogBuilder.create()

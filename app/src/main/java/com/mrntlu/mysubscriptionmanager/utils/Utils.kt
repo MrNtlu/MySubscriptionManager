@@ -25,6 +25,7 @@ object Constants{
     const val THEME_PREF_NAME="theme_code"
     const val ORDER_PREF_NAME="order_type"
     const val SORT_PREF_NAME="sort_type"
+    const val ALARM_PREF_NAME="alarm_type"
     const val CURRENCY_PREF_NAME="default_currency"
     const val DARK_THEME=0
     const val LIGHT_THEME=1
@@ -85,6 +86,21 @@ fun setIntPrefs(sharedPreferences:SharedPreferences,prefName:String,value:Int){
     val editor=sharedPreferences.edit()
     editor.putInt(prefName,value)
     editor.apply()
+}
+
+fun removeIntPrefs(sharedPreferences:SharedPreferences,prefName:String){
+    val editor=sharedPreferences.edit()
+    editor.remove(prefName)
+    editor.apply()
+}
+
+fun getDateWithoutTime():Date{
+    val cal = Calendar.getInstance()
+    cal.set(Calendar.HOUR_OF_DAY, 0)
+    cal.set(Calendar.MINUTE, 0)
+    cal.set(Calendar.SECOND, 0)
+    cal.set(Calendar.MILLISECOND, 0)
+    return cal.time
 }
 
 fun isDark(color: Int): Boolean {

@@ -6,6 +6,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.content.ContextWrapper
+import android.graphics.BitmapFactory
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.mrntlu.mysubscriptionmanager.R
@@ -47,6 +48,7 @@ class NotificationHelper(var message:String,val context: Context):ContextWrapper
         return NotificationCompat.Builder(context, channelID)
             .setContentTitle("Payment Time!")
             .setContentText(message)
-            .setSmallIcon(R.mipmap.ic_launcher)
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setLargeIcon(BitmapFactory.decodeResource(context.resources,R.mipmap.ic_launcher))
     }
 }

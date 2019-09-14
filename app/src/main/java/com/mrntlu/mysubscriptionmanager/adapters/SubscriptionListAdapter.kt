@@ -89,7 +89,7 @@ class SubscriptionListAdapter:RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             }else holder.itemView.equivalentPriceText.setGone()
 
             var paymentDate = DateTime(subscription.paymentDate)
-            var daysLeft = Days.daysBetween(DateTime(Date()), paymentDate).days
+            var daysLeft = Days.daysBetween(DateTime(getDateWithoutTime()), paymentDate).days
 
             val countDown: String
             var totalPaid = subscription.totalPaid
@@ -100,7 +100,7 @@ class SubscriptionListAdapter:RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                         FrequencyType.MONTH -> paymentDate + subscription.frequency.months()
                         FrequencyType.YEAR -> paymentDate + subscription.frequency.years()
                     }
-                    daysLeft = Days.daysBetween(DateTime(Date()), paymentDate).days
+                    daysLeft = Days.daysBetween(DateTime(getDateWithoutTime()), paymentDate).days
                     totalPaid += subscription.price
                 }
                 subscriptionManager.resetPaymentDate(

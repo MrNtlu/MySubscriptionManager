@@ -2,11 +2,10 @@
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:cardCornerRadius="6dp"
-    android:layout_margin="3dp"
+    android:layout_margin="2dp"
     app:cardElevation="0dp"
     app:cardBackgroundColor="?attr/textcolor">
 
@@ -31,12 +30,11 @@
                 android:layout_marginBottom="24dp"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="Name"
-                android:textSize="17sp"
+                android:textSize="18sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/priceText"
-                app:layout_constraintHorizontal_weight="15"
+                app:layout_constraintHorizontal_weight="15.5"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -48,19 +46,32 @@
                 android:layout_marginEnd="4dp"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="100 ₺"
                 android:textAlignment="viewEnd"
-                android:textSize="14sp"
+                android:textSize="13sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toTopOf="@+id/equivalentPriceText"
                 app:layout_constraintEnd_toStartOf="@+id/constraintLayout"
-                app:layout_constraintHorizontal_weight="5"
+                app:layout_constraintHorizontal_weight="4.5"
                 app:layout_constraintStart_toEndOf="@+id/nameText"
                 app:layout_constraintTop_toTopOf="@+id/nameText" />
 
+            <TextView
+                android:id="@+id/equivalentPriceText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:maxLines="1"
+                android:textAlignment="viewEnd"
+                android:textSize="12sp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/nameText"
+                app:layout_constraintEnd_toEndOf="@+id/priceText"
+                app:layout_constraintStart_toStartOf="@+id/priceText"
+                app:layout_constraintTop_toBottomOf="@+id/priceText" />
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/constraintLayout"
-                android:layout_width="60dp"
+                android:layout_width="56.5dp"
                 android:layout_height="0dp"
                 android:background="@android:color/darker_gray"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -73,10 +84,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
                     android:layout_marginEnd="4dp"
-                    android:text="18 Days"
                     android:textAlignment="center"
                     android:textColor="@android:color/white"
-                    android:textSize="13sp"
+                    android:textSize="12sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
@@ -85,28 +95,13 @@
 
                 <View
                     android:id="@+id/view3"
-                    android:layout_width="1dp"
+                    android:layout_width="0.5dp"
                     android:layout_height="0dp"
                     android:background="?attr/textcolor"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <TextView
-                android:id="@+id/equivalentPriceText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:maxLines="1"
-                android:text="100 $"
-                android:textAlignment="viewEnd"
-                android:textSize="12sp"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="@+id/nameText"
-                app:layout_constraintEnd_toEndOf="@+id/priceText"
-                app:layout_constraintStart_toStartOf="@+id/priceText"
-                app:layout_constraintTop_toBottomOf="@+id/priceText" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>

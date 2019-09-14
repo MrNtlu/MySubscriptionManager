@@ -4,6 +4,7 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
 
+    <color name="MaterialBlack">#212121</color>
     <color name="White">#FFFFFF</color>
     <color name="Ivory">#FFFFF0</color>
     <color name="LightYellow">#FFFFE0</color>
@@ -143,7 +144,7 @@
     <color name="MediumBlue">#0000CD</color>
     <color name="DarkBlue">#00008B</color>
     <color name="Navy">#000080</color>
-    <color name="SoftBlack">#212121</color>
     <color name="AlternativeBlack">#020301</color>
     <color name="Black">#000000</color>
+    <color name="bottom_appbar_color">#3949AB</color>
 </resources>

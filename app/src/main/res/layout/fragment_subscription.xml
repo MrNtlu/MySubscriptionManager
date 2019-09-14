@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:clipToPadding="false"
-            android:paddingBottom="80dp"> <!-- TODO change -->
+            android:paddingBottom="80dp">
 
             <TextView
                 android:id="@+id/textView9"
@@ -124,6 +124,7 @@
                 android:background="@drawable/rounded_edittext"
                 android:ems="10"
                 android:hint="@string/e_g_udacity_spotify_etc"
+                android:importantForAutofill="no"
                 android:inputType="textShortMessage"
                 android:maxLines="1"
                 android:padding="8dp"
@@ -131,8 +132,7 @@
                 android:textColorHint="?attr/hintcolor"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/textView2"
-                app:layout_constraintTop_toBottomOf="@+id/textView2"
-                android:importantForAutofill="no" />
+                app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
             <TextView
                 android:id="@+id/textView3"

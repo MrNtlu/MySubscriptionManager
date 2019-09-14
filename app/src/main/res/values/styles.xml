@@ -9,32 +9,32 @@
         <item name="cardbackground">@color/White</item>
         <item name="textcolor">@color/Black</item>
         <item name="fabTint">@color/White</item>
-        <item name="fabBackgroundTint">@color/Black</item>
+        <item name="fabBackgroundTint">@color/MaterialBlack</item>
         <item name="hintcolor">@color/Gray</item>
         <item name="toolbarcolor">@color/White</item>
-        <item name="toolbartextcolor">@color/Black</item>
-        <item name="spinnertint">@color/Black</item>
-        <item name="edittextcolor">@color/Black</item>
+        <item name="toolbartextcolor">@color/MaterialBlack</item>
+        <item name="spinnertint">@color/MaterialBlack</item>
+        <item name="edittextcolor">@color/MaterialBlack</item>
         <item name="sheetbackgroundcolor">@color/White</item>
         <item name="android:windowAnimationStyle">@style/WindowsAnimationTransition</item>
     </style>
 
     <!-- Night/Dark Mode theme. -->
     <style name="DarkTheme" parent="Theme.AppCompat.NoActionBar">
-        <item name="colorPrimary">@color/Black</item>
-        <item name="colorPrimaryDark">@color/Black</item>
-        <item name="colorAccent">@color/Black</item>
-        <item name="backgroundcolor">@color/Black</item>
+        <item name="colorPrimary">@color/MaterialBlack</item>
+        <item name="colorPrimaryDark">@color/MaterialBlack</item>
+        <item name="colorAccent">@color/MaterialBlack</item>
+        <item name="backgroundcolor">@color/MaterialBlack</item>
         <item name="cardbackground">@color/White</item>
         <item name="textcolor">@color/White</item>
-        <item name="fabTint">@color/Black</item>
+        <item name="fabTint">@color/MaterialBlack</item>
         <item name="fabBackgroundTint">@color/Yellow</item>
         <item name="hintcolor">@color/Gray</item>
-        <item name="toolbarcolor">@color/Black</item>
+        <item name="toolbarcolor">@color/MaterialBlack</item>
         <item name="toolbartextcolor">@color/White</item>
         <item name="spinnertint">@color/White</item>
-        <item name="edittextcolor">@color/Black</item>
-        <item name="sheetbackgroundcolor">@color/SoftBlack</item>
+        <item name="edittextcolor">@color/MaterialBlack</item>
+        <item name="sheetbackgroundcolor">@color/MaterialBlack</item>
         <item name="android:windowAnimationStyle">@style/WindowsAnimationTransition</item>
     </style>
 

@@ -23,8 +23,7 @@
         android:layout_height="?attr/actionBarSize"
         android:layout_gravity="bottom"
         app:navigationIcon="@drawable/ic_dehaze_black_24dp"
-        app:backgroundTint="@color/DarkBlue"/>
-
+        app:backgroundTint="@color/bottom_appbar_color"/>
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addFab"
         android:layout_width="wrap_content"
@@ -33,13 +32,11 @@
         app:fabSize="normal"
         android:tint="@color/White"
         android:src="@drawable/ic_add_black_24dp"
-        app:backgroundTint="#f64f59" />
-
+        app:backgroundTint="#e53935" />
     <include
         android:id="@+id/activityProgressLayout"
         layout="@layout/progress_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"/>
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

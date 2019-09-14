@@ -159,14 +159,6 @@ class SubscriptionFragment : Fragment(), DatePickerDialog.OnDateSetListener, Cor
                         showToast(activity,checkRules().values.toTypedArray()[0])
                     }
                 }
-                R.id.appbarDelete ->{
-                    val dialogBuilder = createDialog(activity,"Do you want to delete this item?")
-                    dialogBuilder.setPositiveButton("Yes") { _, _ ->
-                        viewModel.deleteSubscription(mSubscription!!,this)
-                    }
-                    val alert = dialogBuilder.create()
-                    alert.show()
-                }
                 R.id.appbarEdit -> {
                     viewModel.setViewState(UPDATE)
                 }

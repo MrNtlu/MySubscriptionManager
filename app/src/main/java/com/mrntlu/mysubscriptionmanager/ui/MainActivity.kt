@@ -58,6 +58,7 @@ class MainActivity : AppCompatActivity(), ExchangeRateHandler {
 
         val prefs=getSharedPreferences(Constants.THEME_PREF_NAME,0)
         val themeCode=prefs.getInt(Constants.THEME_PREF_NAME,Constants.LIGHT_THEME)
+        window.navigationBarColor=resources.getColor(R.color.bottom_appbar_color,theme)
 
         if(themeCode==Constants.DARK_THEME){
             setTheme(R.style.DarkTheme)
@@ -84,19 +85,22 @@ class MainActivity : AppCompatActivity(), ExchangeRateHandler {
                 it==null -> {
                     printLog(message = "It is null fetching...")
                     if (isInternetAvailable(this)) viewModel.fetchExchangeRates(this)
-                    else exchangeRate=null
+                    else{
+                        exchangeRate=null
+                        if (!isNavSet) setupNavigation()
+                    }
                 }
                 !isInternetAvailable(this) ->{
                     printLog(message = "No internet $it ${it.cacheDate}")
                     exchangeRate=it
                     if (!isNavSet) setupNavigation()
                 }
-                Days.daysBetween(DateTime(it.cacheDate),DateTime(Date())).days>0 -> {
+                Days.daysBetween(DateTime(it.cacheDate),DateTime(Date())).days!=0 -> {
                     printLog(message = "Days remained ${Days.daysBetween(DateTime(it.cacheDate),DateTime(Date())).days}")
                     viewModel.fetchExchangeRates(this)
                 }
                 else -> {
-                    printLog(message = "DB resource $it ${it.cacheDate}")
+                    printLog(message = "${Days.daysBetween(DateTime(it.cacheDate),DateTime(Date())).days} DB resource $it ${it.cacheDate}")
                     exchangeRate=it
                     if (!isNavSet) setupNavigation()
                 }
@@ -158,6 +162,7 @@ class MainActivity : AppCompatActivity(), ExchangeRateHandler {
 
     override fun onError(exception: String) {
         printLog(message = "Error $exception")
+        if (!isNavSet) setupNavigation()
         if (exchangeFetchHandler!=null){
             exchangeFetchHandler!!.onError()
             exchangeFetchHandler=null
