@@ -178,12 +178,6 @@ class SubscriptionListFragment : Fragment(), SubscriptionManager {
                 navigationSheetDialog.dismiss()
             }
         }else navigationSheetDialog.updateExchangeSheet.setGone()
-
-
-        navigationSheetDialog.deleteAllSheet.setOnClickListener {
-            showToast(it.context,"Delete all pressed.")
-            navigationSheetDialog.dismiss()
-        }
     }
 
     private fun setSortSheetDialog(view:View){

@@ -19,7 +19,7 @@ class ExchangeViewModel(application: Application): AndroidViewModel(application)
 
     fun fetchExchangeRates(exchangeRateHandler: ExchangeRateHandler){
         mJob=viewModelScope.launch(Dispatchers.IO + CoroutineExceptionHandler { _, e ->
-            exchangeRateHandler.onError(if (e.message==null)"No Internet" else e.message!!)
+            exchangeRateHandler.onError(if (e.message == null) "No Internet" else e.message!!)
         }){
             var response: ExchangeResponse?=null
             val job= withTimeoutOrNull(TIME_OUT) {

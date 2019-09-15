@@ -25,13 +25,6 @@
             app:exitAnim="@anim/slide_out_left"
             app:enterAnim="@anim/slide_in_right"/>
         <action
-            android:id="@+id/action_subsList_to_subStats"
-            app:destination="@id/subscriptionStatsFragment"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:enterAnim="@anim/slide_in_right"/>
-        <action
             android:id="@+id/action_subsList_to_rate"
             app:destination="@id/exchangeRateFragment"
             app:popEnterAnim="@anim/slide_in_left"
@@ -85,11 +78,6 @@
             app:popUpTo="@+id/subscriptionListFragment"
             app:popUpToInclusive="true" />
     </fragment>
-    <fragment
-        android:id="@+id/subscriptionStatsFragment"
-        android:name="com.mrntlu.mysubscriptionmanager.ui.fragments.SubscriptionStatsFragment"
-        android:label="fragment_subscription_stats"
-        tools:layout="@layout/fragment_subscription_stats" />
     <fragment
         android:id="@+id/exchangeRateFragment"
         android:name="com.mrntlu.mysubscriptionmanager.ui.fragments.ExchangeRateFragment"

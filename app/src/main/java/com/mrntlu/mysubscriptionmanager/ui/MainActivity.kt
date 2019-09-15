@@ -18,6 +18,9 @@ import com.mrntlu.mysubscriptionmanager.ui.fragments.*
 import com.mrntlu.mysubscriptionmanager.utils.*
 import com.mrntlu.mysubscriptionmanager.viewmodels.ExchangeViewModel
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.joda.time.DateTime
 import org.joda.time.Days
 import java.util.*
@@ -136,10 +139,6 @@ class MainActivity : AppCompatActivity(), ExchangeRateHandler {
                 bottomAppBar.fabAlignmentMode= BottomAppBar.FAB_ALIGNMENT_MODE_END
                 setBottomAppBarItems(null,R.menu.subs_appbar_view_menu,R.drawable.ic_edit_black_24dp)
             }
-            is SubscriptionStatsFragment->{
-                bottomAppBar.fabAlignmentMode= BottomAppBar.FAB_ALIGNMENT_MODE_END
-                setBottomAppBarItems(null,R.menu.subs_appbar_edit_menu,R.drawable.ic_clear_black_24dp)
-            }
             is ExchangeRateFragment->{
                 bottomAppBar.fabAlignmentMode= BottomAppBar.FAB_ALIGNMENT_MODE_END
                 setBottomAppBarItems(null,R.menu.subs_appbar_viewrate_menu,R.drawable.ic_clear_black_24dp)
@@ -161,11 +160,13 @@ class MainActivity : AppCompatActivity(), ExchangeRateHandler {
     }
 
     override fun onError(exception: String) {
-        printLog(message = "Error $exception")
-        if (!isNavSet) setupNavigation()
-        if (exchangeFetchHandler!=null){
-            exchangeFetchHandler!!.onError()
-            exchangeFetchHandler=null
+        GlobalScope.launch(Dispatchers.Main) {
+            printLog(message = "Error $exception")
+            if (!isNavSet) setupNavigation()
+            if (exchangeFetchHandler != null) {
+                exchangeFetchHandler!!.onError()
+                exchangeFetchHandler = null
+            }
         }
     }
 }
